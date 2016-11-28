@@ -1,0 +1,9 @@
+name: Fantasy
+version: 0.1
+author: the_waltster
+main: me.waltster.Fantasy.FantasyMain
+commands:
+  help:
+    description: Get help!
+  restart:
+    description: Restart your game
