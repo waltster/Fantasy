@@ -1,0 +1,14 @@
+lobby:
+  spawn: "world,0,128,0"
+
+example:
+  cities:
+    example1:
+      race: "human"
+      spawn: "world,x,y,z"
+    example2:
+      race: "elf"
+      spawn: "world,x,y,z"
+    example3:
+      race: "dwarf"
+      spawn: "world,x,y,z"

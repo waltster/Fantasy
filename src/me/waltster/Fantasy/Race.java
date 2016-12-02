@@ -32,7 +32,7 @@ public enum Race {
 	},
 	DWARF(Material.IRON_PICKAXE){
 		{
-			lore.add("You are human.");
+			lore.add("You are dwarvish.");
 			lore.add("");
 			lore.add("You are the backbone of civilization");
 			lore.add("from ancient kingdoms, to modern");
@@ -42,26 +42,25 @@ public enum Race {
 			lore.add("but your ingenuity will take you");
 			lore.add("places.");
 			
-			kits.add(Kit.CIVILIAN);
-			kits.add(Kit.BUILDER);
-			kits.add(Kit.FARMER);
+			kits.add(Kit.WARRIOR);
+			kits.add(Kit.BLACKSMITH);
+			kits.add(Kit.MINER);
 		}
 	},
 	ELF(Material.BOW){
 		{
-			lore.add("You are human.");
+			lore.add("You are elvish.");
 			lore.add("");
-			lore.add("You are the backbone of civilization");
-			lore.add("from ancient kingdoms, to modern");
-			lore.add("empires, your race has been in the");
-			lore.add("center from the start.");
-			lore.add("You may not be as strong as others,");
-			lore.add("but your ingenuity will take you");
-			lore.add("places.");
+			lore.add("You are the legendary gracefull");
+			lore.add("civilization, rumoured to live up");
+			lore.add("to 700 years. Your civilization");
+			lore.add("it ancient and advanced in magic");
+			lore.add("and weaponary.");
+			lore.add("");
+			lore.add("Your race's craftsmanship is");
+			lore.add("unrivaled when it comes to wood.");
 			
-			kits.add(Kit.CIVILIAN);
-			kits.add(Kit.BUILDER);
-			kits.add(Kit.FARMER);
+			kits.add(Kit.ARCHER);
 		}
 	},
 	NONE(Material.BEDROCK){
@@ -133,25 +132,28 @@ public enum Race {
 	 * @param r
 	 */
 	public static void showRaceSelector(Player p){
-		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Choose Your Race");
+		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Select Your Race");
 		
 		for(Race r : values()){
-			if(r.getName() == "None"){
+			if(r.icon.getType() == Material.BEDROCK){
 				continue;
 			}
 			
 			ItemStack item = r.icon.clone();
 			ItemMeta meta = item.getItemMeta();
+			List<String> lore = new ArrayList<String>();
 			
-			meta.getLore().add(ChatColor.AQUA + "----------");
+			lore.add(ChatColor.AQUA + "----------");
 			
 			if(r.doesPlayerOwnRace(p)){
-				meta.getLore().add(ChatColor.GREEN + "Unlocked");
+				lore.add(ChatColor.GREEN + "Unlocked");
 			}else{
-				meta.getLore().add(ChatColor.RED + "Locked. Visit the store at");
-				meta.getLore().add(ChatColor.RED + "Shotbow.net to unlock.");
+				lore.add(ChatColor.RED + "Locked. Visit the store at");
+				lore.add(ChatColor.RED + "Shotbow.net to unlock.");
 			}
 			
+			meta.setLore(lore);
+			item.setItemMeta(meta);
 			inv.addItem(item);
 		}
 		

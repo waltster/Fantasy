@@ -218,8 +218,9 @@ public enum Kit {
 	 */
 	Kit(Material m){
 		icon = new ItemStack(m);
-		//ItemMeta meta = icon.getItemMeta();
-		//icon.setItemMeta(meta);
+		ItemMeta meta = icon.getItemMeta();
+		meta.setDisplayName(getName());
+		icon.setItemMeta(meta);
 	}
 	
 	private void init(){
@@ -305,25 +306,28 @@ public enum Kit {
 	 * @param r
 	 */
 	public static void showKitSelector(Player p, Race r){
-		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Choose Your Kit");
+		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Select Your Class");
 		
 		for(Kit k : r.getKits()){
-			if(k.getName() == "None"){
+			if(k.icon.getType() == Material.BEDROCK){
 				continue;
 			}
 			
 			ItemStack item = k.icon.clone();
 			ItemMeta meta = item.getItemMeta();
+			List<String> lore = new ArrayList<String>();
 			
-			meta.getLore().add(ChatColor.AQUA + "----------");
+			lore.add(ChatColor.AQUA + "----------");
 			
 			if(k.doesPlayerOwnClass(p)){
-				meta.getLore().add(ChatColor.GREEN + "Unlocked");
+				lore.add(ChatColor.GREEN + "Unlocked");
 			}else{
-				meta.getLore().add(ChatColor.RED + "Locked. Visit the store at");
-				meta.getLore().add(ChatColor.RED + "Shotbow.net to unlock.");
+				lore.add(ChatColor.RED + "Locked. Visit the store at");
+				lore.add(ChatColor.RED + "Shotbow.net to unlock.");
 			}
 			
+			meta.setLore(lore);
+			item.setItemMeta(meta);
 			inv.addItem(item);
 		}
 		

@@ -1,0 +1,11 @@
+messages:
+  revived_message: "You've been revived by "
+  revived_sucessfully: "Revival successful!"
+  cannot_revive_npc: "You cannot revive a non-player entity"
+  cannot_harm_race: "You cannot harm your own race!"
+  you_died: "You have died. Teleporting you to the lobby now."
+  revive_timer_started: "You have 30s to be revived"
+  race_not_owned: "You don't own that race! Unlock it on Shotbow.net!"
+  class_not_owned: "You don't own that class! Unlock it on Shotbow.net!"
+  cant_move_while_dead: "You can't move while you're dead!"
+  player_join: "Welcome to Fantasy!"

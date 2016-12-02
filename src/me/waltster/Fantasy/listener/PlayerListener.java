@@ -1,6 +1,8 @@
 package me.waltster.Fantasy.listener;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import me.waltster.Fantasy.FantasyMain;
@@ -47,12 +50,12 @@ public class PlayerListener implements Listener{
 		event.setJoinMessage("");
 		p.sendMessage(ChatColor.GOLD + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.player_join"));
 		
-		if(p.hasPlayedBefore() || PlayerMeta.getPlayerMeta(p).isAlive()){
+		/*if(p.hasPlayedBefore() || PlayerMeta.getPlayerMeta(p).isAlive()){
 			p.sendMessage(ChatColor.GOLD + "Sending you to your previous position");
 			p.setDisplayName(ChatColor.GOLD + "[" + Util.getChatColor(PlayerMeta.getPlayerMeta(p).getRace()) + PlayerMeta.getPlayerMeta(p).getRace().getName() + ChatColor.GOLD + "] " + p.getName());
 
 			return;
-		}else{
+		}else{*/
 			p.getInventory().setBoots(new ItemStack(Material.AIR));
 			p.getInventory().setLeggings(new ItemStack(Material.AIR));
 			p.getInventory().setChestplate(new ItemStack(Material.AIR));
@@ -60,8 +63,13 @@ public class PlayerListener implements Listener{
 			p.getInventory().clear();
 			
 			ItemStack selector = new ItemStack(Material.EYE_OF_ENDER);
-			selector.getItemMeta().setDisplayName(ChatColor.GOLD + "Select Race and Class");
-			selector.getItemMeta().getLore().add(ChatColor.GOLD + "Click to open the selector.");
+			ItemMeta meta = selector.getItemMeta();
+			List<String> lore = new ArrayList<String>();
+			
+			meta.setDisplayName(ChatColor.GOLD + "Select Race and Class");
+			lore.add(ChatColor.GOLD + "Click to open the selector.");
+			meta.setLore(lore);
+			selector.setItemMeta(meta);
 			
 			p.getInventory().addItem(selector);
 			p.updateInventory();
@@ -75,7 +83,7 @@ public class PlayerListener implements Listener{
 			}
 			
 			p.teleport(main.getLobbySpawn());
-		}
+	//	}
 	}
 	
 	/**
@@ -204,34 +212,36 @@ public class PlayerListener implements Listener{
 	public void onPlayerUseSelector(PlayerInteractEvent event){
 		Player p = event.getPlayer();
 		
-		if(event.getItem().getType() == Material.EYE_OF_ENDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Select Race and Class")){
-			event.setCancelled(true);
-			Race.showRaceSelector(p);
-		}else if(event.getItem().getType() == Material.BLAZE_POWDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Revival Powder")){
-			event.setCancelled(true);
-
-			Collection<Entity> entities = Bukkit.getWorld("").getNearbyEntities(p.getEyeLocation(), 0.5, 0.5, 0.5);
-			
-			if(entities.size() > 1){
-				p.sendMessage("Please focus on one entity.");
-			}else{
-				Entity e = entities.iterator().next();
+		if(event.getItem() != null){
+			if(event.getItem().getType() == Material.EYE_OF_ENDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Select Race and Class")){
+				event.setCancelled(true);
+				Race.showRaceSelector(p);
+			}else if(event.getItem().getType() == Material.BLAZE_POWDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Revival Powder")){
+				event.setCancelled(true);
+	
+				Collection<Entity> entities = Bukkit.getWorld("").getNearbyEntities(p.getEyeLocation(), 0.5, 0.5, 0.5);
 				
-				if(e instanceof Player){
-					Player p1 = (Player)e;
-				
-					if(PlayerMeta.getPlayerMeta(p1).needsRevived()){
-						PlayerMeta.getPlayerMeta(p1).setNeedsRevived(false);
-						p1.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_message") + p.getDisplayName());
-						p.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_sucessfully"));
-						
-						ItemStack toRemove = event.getItem().clone();
-						toRemove.setAmount(1);
-						
-						p.getInventory().remove(toRemove);
-					}
+				if(entities.size() > 1){
+					p.sendMessage("Please focus on one entity.");
 				}else{
-					p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cannot_revive_npc"));
+					Entity e = entities.iterator().next();
+					
+					if(e instanceof Player){
+						Player p1 = (Player)e;
+					
+						if(PlayerMeta.getPlayerMeta(p1).needsRevived()){
+							PlayerMeta.getPlayerMeta(p1).setNeedsRevived(false);
+							p1.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_message") + p.getDisplayName());
+							p.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_sucessfully"));
+							
+							ItemStack toRemove = event.getItem().clone();
+							toRemove.setAmount(1);
+							
+							p.getInventory().remove(toRemove);
+						}
+					}else{
+						p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cannot_revive_npc"));
+					}
 				}
 			}
 		}
