@@ -192,6 +192,17 @@ public enum Kit {
 			lore.add("With your light equipment, you");
 			lore.add("are given a speed boost while");
 			lore.add("wearing light armor.");
+			
+			spawnItems.add(new ItemStack(Material.BOW));
+			spawnItems.add(new ItemStack(Material.ARROW, 16));
+			spawnItems.add(new ItemStack(Material.MELON, 15));
+			
+			armor = new ItemStack[]{
+					new ItemStack(Material.AIR),
+					new ItemStack(Material.AIR),
+					new ItemStack(Material.LEATHER_CHESTPLATE),
+					new ItemStack(Material.AIR),
+			};
 		}
 	},
 	NONE(Material.BEDROCK){
@@ -220,13 +231,14 @@ public enum Kit {
 		icon = new ItemStack(m);
 		ItemMeta meta = icon.getItemMeta();
 		meta.setDisplayName(getName());
+		meta.setLore(new ArrayList<String>());
 		icon.setItemMeta(meta);
 	}
 	
 	private void init(){
 		for(int i = 0; i < lore.size(); i++){
 			String s = lore.get(i);
-			s += ChatColor.AQUA;
+			s = ChatColor.AQUA + s;
 			lore.set(i, s);
 		}
 		
@@ -315,7 +327,7 @@ public enum Kit {
 			
 			ItemStack item = k.icon.clone();
 			ItemMeta meta = item.getItemMeta();
-			List<String> lore = new ArrayList<String>();
+			List<String> lore = meta.getLore();
 			
 			lore.add(ChatColor.AQUA + "----------");
 			

@@ -12,10 +12,10 @@ import me.waltster.Fantasy.PlayerMeta;
 import me.waltster.Fantasy.Race;
 import me.waltster.Fantasy.Util;
 
-public class CommandRestart implements CommandExecutor{
+public class CommandDie implements CommandExecutor{
 	private FantasyMain main;
 	
-	public CommandRestart(FantasyMain main){
+	public CommandDie(FantasyMain main){
 		this.main = main;
 	}
 	
@@ -32,7 +32,7 @@ public class CommandRestart implements CommandExecutor{
 			meta.setRace(Race.NONE);
 			Util.sendPlayerToLobby(p, main.getLobbySpawn());
 		}else{
-			sender.sendMessage(ChatColor.RED + "Only players can issue the restart command");
+			sender.sendMessage(ChatColor.RED + "Only players can issue the 'die' command");
 		}
 		
 		return true;

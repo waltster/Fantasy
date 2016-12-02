@@ -9,3 +9,5 @@ messages:
   class_not_owned: "You don't own that class! Unlock it on Shotbow.net!"
   cant_move_while_dead: "You can't move while you're dead!"
   player_join: "Welcome to Fantasy!"
+  race_cant_do_that: "Your race cannot use that item!"
+  cant_trade_npc: "You can't trade with an NPC!"

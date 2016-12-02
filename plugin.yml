@@ -5,5 +5,9 @@ main: me.waltster.Fantasy.FantasyMain
 commands:
   help:
     description: Get help!
-  restart:
+  die:
     description: Restart your game
+  class:
+    description: Select your class or open the class selector
+  race:
+    description: Select your race or open race selector

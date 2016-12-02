@@ -1,5 +1,6 @@
 package me.waltster.Fantasy.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -14,10 +15,16 @@ public class ChatListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent e){
 		PlayerMeta meta = PlayerMeta.getPlayerMeta(e.getPlayer());
 		
+		e.setCancelled(true);
+		
+		String msg = "";
+		
 		if(meta.getRace() != Race.NONE){
-			e.setMessage(ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + meta.getRace().getName() + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage());
+			msg = ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + meta.getRace().getName() + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage();
 		}else{
-			e.setMessage(ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + "Lobby" + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage());
+			msg = ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + "Lobby" + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage();
 		}
+		
+		Bukkit.broadcastMessage(msg);
 	}
 }

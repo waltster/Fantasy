@@ -2,8 +2,10 @@ package me.waltster.Fantasy.listener;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -52,10 +54,13 @@ public class SoulboundListener implements Listener{
 	public static void soulbind(ItemStack item){
 		ItemMeta meta = item.getItemMeta();
 		
-		if(!meta.hasLore()){
-			meta.setLore(Arrays.asList(ChatColor.GOLD + "Soulbound"));
-		}else{
-			meta.getLore().add(ChatColor.GOLD + "Soulbound");
+		if(item.getType() != Material.AIR){
+			if(!meta.hasLore()){
+				meta.setLore(Arrays.asList(ChatColor.GOLD + "Soulbound"));
+			}else{
+				List<String> lore = meta.getLore();
+				lore.add(ChatColor.GOLD + "Soulbound");
+			}
 		}
 	}
 }

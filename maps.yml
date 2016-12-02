@@ -1,0 +1,12 @@
+lobby:
+  spawn: "world,0,128,0"
+
+cities:
+  activeCities:
+    - "example1"
+  example1:
+    signs:
+      - ""
+    spawn: "0, 110, 5"
+    race: "elf"
+
