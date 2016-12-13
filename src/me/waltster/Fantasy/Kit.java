@@ -21,7 +21,7 @@ public enum Kit {
 	/**
 	 * Human kits.
 	 */
-	CIVILIAN(Material.CHEST){
+	CIVILIAN(Material.BREAD){
 		{
 			lore.add("You are the civilian.");
 			lore.add("");
@@ -67,7 +67,7 @@ public enum Kit {
 			};
 		}
 	},
-	FARMER(Material.CROPS){
+	FARMER(Material.WHEAT){
 		{
 			lore.add("You are the farmer.");
 			lore.add("");
@@ -94,7 +94,17 @@ public enum Kit {
 			};
 		}
 	},
-
+	MARINER(Material.BOAT_BIRCH){
+		{
+			lore.add("You are the sailor.");
+			lore.add("");
+			lore.add("Your expertiece makes you a");
+			lore.add("formitable foe in any sea-based");
+			lore.add("combat. You get +1 attack when");
+			lore.add("in water, and if you're in a boat");
+			lore.add("then you get +2.");
+		}
+	},
 	/**
 	 * Dwarvish classes
 	 */

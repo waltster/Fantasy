@@ -60,6 +60,7 @@ public class SoulboundListener implements Listener{
 			}else{
 				List<String> lore = meta.getLore();
 				lore.add(ChatColor.GOLD + "Soulbound");
+				meta.setLore(lore);
 			}
 		}
 	}

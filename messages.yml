@@ -1,13 +1,42 @@
+# This is the only node that is used. Each message is required to be filled out
+# or else the plugin will throw a null pointer. If you don't wnat a message to be
+# sent, just use: ""
 messages:
+  # The message to send a player when they've been revived. This is followed by the player that revived them's name
   revived_message: "You've been revived by "
+  
+  # The message to send a player who successfully revives another player
   revived_sucessfully: "Revival successful!"
+  
+  # The message to send a player when they try to use revival powder on a NPC
   cannot_revive_npc: "You cannot revive a non-player entity"
+  
+  # The message to send a player when they try to harm their own race
   cannot_harm_race: "You cannot harm your own race!"
+  
+  # The message to send a player when they are not revived and die.
   you_died: "You have died. Teleporting you to the lobby now."
+
+  # The message to send a player when their revival timer starts
   revive_timer_started: "You have 30s to be revived"
+  
+  # The message to send a player when they try to use a race they don't own.
   race_not_owned: "You don't own that race! Unlock it on Shotbow.net!"
+  
+  # The message to send a player when they try to use a class they don't own.
   class_not_owned: "You don't own that class! Unlock it on Shotbow.net!"
+  
+  # The message to send a player when they try to move when they are "dead"
   cant_move_while_dead: "You can't move while you're dead!"
+  
+  # The message to send a player when they join the game
   player_join: "Welcome to Fantasy!"
-  race_cant_do_that: "Your race cannot use that item!"
+  
+  # The message to send a player when they try to use a race-restricted item (eg. anvil, enchantement table)
+  race_cant_use_that: "Your race cannot use that item!"
+  
+  # The message to send a player when they try to trade with a villager
   cant_trade_npc: "You can't trade with an NPC!"
+  
+  # The message to send a player when they try to build in an area and aren't permitted
+  cant_build_area: "You can't build in this area!"

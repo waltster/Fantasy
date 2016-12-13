@@ -2,6 +2,7 @@ package me.waltster.Fantasy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,13 +37,14 @@ public class FantasyMain extends JavaPlugin{
 		this.getLogger().info("(C) Walter Pach 2016, all rights reserved");
 		
 		this.pluginManager = this.getServer().getPluginManager();
+		this.configManager = new ConfigManager(this);
+		this.citySignManager = new CitySignManager(this);
+		
 		this.chatListener = new ChatListener();
 		this.classAbilityListener = new ClassAbilityListener(this);
 		this.playerListener = new PlayerListener(this);
 		this.soulboundListener = new SoulboundListener();
-		this.worldListener = new WorldListener();
-		this.configManager = new ConfigManager(this);
-		this.citySignManager = new CitySignManager(this);
+		this.worldListener = new WorldListener(this);
 		
 		this.configManager.loadConfigurations("config.yml", "maps.yml", "messages.yml");
 		this.pluginManager.registerEvents(chatListener, this);
@@ -55,15 +57,10 @@ public class FantasyMain extends JavaPlugin{
 		this.lobbySpawnLocation = Util.parseLocation(this.configManager.getConfiguration("maps.yml").getConfig().getString("lobby.spawn"));
 		this.currentMap = Bukkit.getWorld(this.configManager.getConfiguration("config.yml").getConfig().getString("map"));
 		
-		if(lobbySpawnLocation == null){
-			throw new IllegalStateException("Null result when reading lobby spawn from maps.yml");
-		}
-		if(currentMap == null){
-			throw new IllegalStateException("Null result when reading map name from config.yml");
-		}
-		
+		if(lobbySpawnLocation == null) throw new IllegalStateException("Null result when reading lobby spawn from maps.yml");
+		if(currentMap == null) throw new IllegalStateException("Null result when reading map name from config.yml");
+
 		this.citySignManager.loadCitySigns();
-		
 		getCommand("help").setExecutor(new CommandHelp());
 		getCommand("die").setExecutor(new CommandDie(this));
 		getCommand("race").setExecutor(new CommandRace());
