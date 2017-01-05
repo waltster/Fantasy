@@ -21,7 +21,7 @@ public enum Kit {
 	/**
 	 * Human kits.
 	 */
-	CIVILIAN(Material.BREAD){
+	CIVILIAN(Material.BREAD, 0){
 		{
 			lore.add("You are the civilian.");
 			lore.add("");
@@ -43,7 +43,7 @@ public enum Kit {
 			};
 		}
 	},
-	BUILDER(Material.WORKBENCH){
+	BUILDER(Material.WORKBENCH, 5000){
 		{
 			lore.add("You are the builder.");
 			lore.add("");
@@ -67,7 +67,7 @@ public enum Kit {
 			};
 		}
 	},
-	FARMER(Material.WHEAT){
+	FARMER(Material.WHEAT, 5000){
 		{
 			lore.add("You are the farmer.");
 			lore.add("");
@@ -94,7 +94,7 @@ public enum Kit {
 			};
 		}
 	},
-	MARINER(Material.BOAT_BIRCH){
+	MARINER(Material.BOAT_BIRCH, 5000){
 		{
 			lore.add("You are the sailor.");
 			lore.add("");
@@ -108,7 +108,7 @@ public enum Kit {
 	/**
 	 * Dwarvish classes
 	 */
-	MINER(Material.IRON_PICKAXE){
+	MINER(Material.IRON_PICKAXE, 0){
 		{
 			lore.add("You are the miner.");
 			lore.add("");
@@ -133,7 +133,7 @@ public enum Kit {
 			};
 		}
 	},
-	BLACKSMITH(Material.ANVIL){
+	BLACKSMITH(Material.ANVIL, 5000){
 		{
 			lore.add("You are the blacksmith.");
 			lore.add("");
@@ -157,7 +157,7 @@ public enum Kit {
 			};
 		}
 	},
-	WARRIOR(Material.IRON_SWORD){
+	WARRIOR(Material.IRON_SWORD, 7000){
 		{
 			lore.add("You are the warrior.");
 			lore.add("");
@@ -190,7 +190,7 @@ public enum Kit {
 	/**
 	 * Elvish classes
 	 */
-	ARCHER(Material.BOW){
+	ARCHER(Material.BOW, 5000){
 		{
 			lore.add("You are the archer.");
 			lore.add("");
@@ -215,7 +215,7 @@ public enum Kit {
 			};
 		}
 	},
-	NONE(Material.BEDROCK){
+	NONE(Material.BEDROCK, 0){
 		{
 		}
 	};
@@ -231,18 +231,20 @@ public enum Kit {
 	List<String> lore = new ArrayList<String>();
 	List<ItemStack> spawnItems = new ArrayList<ItemStack>();
 	ItemStack[] armor;
+	int cost;
 	
 	/**
 	 * 
 	 * @param r
 	 * @param m
 	 */
-	Kit(Material m){
+	Kit(Material m, int cost){
 		icon = new ItemStack(m);
 		ItemMeta meta = icon.getItemMeta();
 		meta.setDisplayName(getName());
 		meta.setLore(new ArrayList<String>());
 		icon.setItemMeta(meta);
+		this.cost = cost;
 	}
 	
 	private void init(){
@@ -284,6 +286,10 @@ public enum Kit {
 		addEffects(p);
 	}
 	
+	public int getCost(){
+	    return cost;
+	}
+	
 	/**
 	 * 
 	 * @param p
@@ -319,7 +325,7 @@ public enum Kit {
 	 * @return
 	 */
 	public boolean doesPlayerOwnClass(Player p){
-		return p.isOp() || p.hasPermission("fantasy.kit." + getName().toLowerCase());
+		return p.isOp() || p.hasPermission("fantasy.kit." + getName().toLowerCase()) || this == Kit.CIVILIAN || this == Kit.MINER || this == Kit.ARCHER;
 	}
 	
 	/**
@@ -344,8 +350,7 @@ public enum Kit {
 			if(k.doesPlayerOwnClass(p)){
 				lore.add(ChatColor.GREEN + "Unlocked");
 			}else{
-				lore.add(ChatColor.RED + "Locked. Visit the store at");
-				lore.add(ChatColor.RED + "Shotbow.net to unlock.");
+				lore.add(ChatColor.RED + "Locked. Use /buy to purchase");
 			}
 			
 			meta.setLore(lore);

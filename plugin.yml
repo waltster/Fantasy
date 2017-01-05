@@ -11,3 +11,13 @@ commands:
     description: Select your class or open the class selector
   race:
     description: Select your race or open race selector
+  buyclass:
+    description: Purchase a class with Royals
+  buyrace:
+    description: Purchase a race with Royals
+  stats:
+    description: View your stats
+  royals:
+    description: /royals <get/give/take/set> <player> <amount>
+  fartp:
+    description: Teleport a player to a different world.

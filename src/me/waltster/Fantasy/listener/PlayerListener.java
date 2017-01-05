@@ -1,8 +1,6 @@
 package me.waltster.Fantasy.listener;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,18 +16,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
 
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.Kit;
 import me.waltster.Fantasy.PlayerMeta;
 import me.waltster.Fantasy.Race;
+import me.waltster.Fantasy.StatType;
 import me.waltster.Fantasy.Util;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
  * The Listener for all Player events (excluding class/race specific ones).
@@ -64,16 +64,18 @@ public class PlayerListener implements Listener{
 		// Change this to whatever you want. Right now it just loads the configurable message from 'messages.yml'.
 		p.sendMessage(ChatColor.GOLD + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.player_join"));
 		
-		/*if(p.hasPlayedBefore() || PlayerMeta.getPlayerMeta(p).isAlive()){
+		 
+		if(p.hasPlayedBefore() || PlayerMeta.getPlayerMeta(p).isAlive()){
 			p.sendMessage(ChatColor.GOLD + "Sending you to your previous position");
-			p.setDisplayName(ChatColor.GOLD + "[" + Util.getChatColor(PlayerMeta.getPlayerMeta(p).getRace()) + PlayerMeta.getPlayerMeta(p).getRace().getName() + ChatColor.GOLD + "] " + p.getName());
-
+			Util.updatePlayerName(p, ChatColor.GOLD + "[" + ChatColor.WHITE + PlayerMeta.getPlayerMeta(p).getRace().getName() + ChatColor.GOLD + "] " + p.getName());
 			return;
-		}else{*/
+		}else{
+		    Util.updatePlayerName(p, ChatColor.GOLD + "[" + "Lobby" + ChatColor.GOLD + "] " + p.getName());
+
 			// I wrote a method in the utilities class to clean up this area. We have to pass the
 			// location because there's no static instance of FantasyMain to use with Util.
 			Util.sendPlayerToLobby(p, main.getLobbySpawn());
-		//	}
+		}
 	}
 	
 	/**
@@ -136,13 +138,17 @@ public class PlayerListener implements Listener{
 		
 			// Send the death message to everyone.
 			event.setDeathMessage(deadName + ChatColor.RED + " was killed by " + killerName);
+			main.getStatsManager().incrementStat(StatType.KILLS, p.getKiller());
+			
+			p.getKiller().sendMessage(ChatColor.GREEN + "+3 Royals");
+			main.getStatsManager().incrementStat(StatType.ROYALS, p.getKiller(), 3);
 		}
 		
 		// Store that the player needs revived before he can move again.
 		PlayerMeta.getPlayerMeta(p).setNeedsRevived(true);
 		
 		// Tell the player they've got 30s to be revived.
-		p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("messages.revive_timer_started"));
+		p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revive_timer_started"));
 		
 		// Setup a new task for 30s from now to either remove the player (if they weren't revived,
 		// or continue gameplay (if they were).
@@ -167,7 +173,7 @@ public class PlayerListener implements Listener{
 				// Send the player to the lobby
 				Util.sendPlayerToLobby(p, main.getLobbySpawn());
 			}
-		}, 20*30); // <-- number is the number of ticks. Each tick is 1/20th of a second, so 30*20 is 30s.
+		}, 20*15); // <-- number is the number of ticks. Each tick is 1/20th of a second, so 30*20 is 30s.
 	}
 	
 	/**
@@ -231,7 +237,81 @@ public class PlayerListener implements Listener{
 			
 			p.sendMessage(ChatColor.GREEN + "Class " + ChatColor.WHITE + ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()) + ChatColor.GREEN + " selected.");
 			PlayerMeta.getPlayerMeta(p).setKit(Kit.valueOf(name));
-		}
+		}else if(event.getInventory().getTitle().startsWith("Purchase Stuff")){
+		    if(event.getCurrentItem().getType() == Material.AIR){
+		        return;
+		    }
+		    
+		    p.closeInventory();
+		    event.setCancelled(true);
+		    
+		    String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).toUpperCase();
+
+		    if(name == "RACE"){
+		        Util.showRaceBuySelector(p);
+		        p.sendMessage(ChatColor.GREEN + "Opening race purchasing selector");
+		    }else if(name == "CLASS"){
+                Util.showClassBuySelector(p);
+                p.sendMessage(ChatColor.GREEN + "Opening class purchasing selector");
+		    }
+		}else if(event.getInventory().getTitle().startsWith("Buy a Race")){
+		    if(event.getCurrentItem().getType() == Material.AIR){
+                return;
+            }
+            
+            p.closeInventory();
+            event.setCancelled(true);
+
+            String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).toUpperCase();
+            
+            if(!Race.valueOf(name).doesPlayerOwnRace(p)){
+                int amount = main.getStatsManager().getStat(StatType.ROYALS, p);
+                
+                if(amount >= Race.valueOf(name).getCost()){
+                    PermissionUser user = PermissionsEx.getUser(p);
+
+                    main.getStatsManager().setValue(StatType.ROYALS, p, amount - Race.valueOf(name).getCost());
+                    user.addPermission("fantasy.race." + name.toLowerCase());
+                    p.sendMessage(ChatColor.GREEN + "Purchased race " + ChatColor.WHITE + Race.valueOf(name).getName());
+                }else{
+                    p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " Royals");
+                }
+            }
+		}else if(event.getInventory().getTitle().startsWith("Buy a Class")){
+            if(event.getCurrentItem().getType() == Material.AIR){
+                return;
+            }
+            
+            p.closeInventory();
+            event.setCancelled(true);
+
+            String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).toUpperCase();
+            
+            if(!Kit.valueOf(name).doesPlayerOwnClass(p)){
+                int amount = main.getStatsManager().getStat(StatType.ROYALS, p);
+                
+                if(amount >= Kit.valueOf(name).getCost()){
+                    PermissionUser user = PermissionsEx.getUser(p);
+
+                    main.getStatsManager().setValue(StatType.ROYALS, p, amount - Race.valueOf(name).getCost());
+                    user.addPermission("fantasy.kit." + name.toLowerCase());
+                    p.sendMessage(ChatColor.GREEN + "Purchased class " + ChatColor.WHITE + Race.valueOf(name).getName());
+                }else{
+                    p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " Royals");
+                }
+            }
+        }
+	}
+	
+	@EventHandler
+	public void onSoulboundInteract(InventoryClickEvent event){
+	    if(event.getInventory().getType() == InventoryType.CHEST || event.getInventory().getType() == InventoryType.DISPENSER || event.getInventory().getType() == InventoryType.DROPPER){
+	        if(event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta()){
+    	        if(event.getCurrentItem().getItemMeta().getDisplayName().contains(ChatColor.GOLD + "Soulbound")){
+    	            event.setCancelled(true);
+    	        }
+	        }
+	    }
 	}
 	
 	/**
@@ -309,8 +389,7 @@ public class PlayerListener implements Listener{
 					// If the city is in the configuration then let's send the player
 					if(config.getString("cities." + cityName + ".spawn") != null){
 						// Get the spawn location
-						Location citySpawn = Util.parseLocation(main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("cities." + cityName + ".spawn"));
-						
+					    Location citySpawn = Util.parseLocation(main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("cities." + cityName + ".spawn"));
 						// Make sure the city is owned by the Player's race and if not then send them a message saying so
 						if(Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase()) != PlayerMeta.getPlayerMeta(p).getRace()){
 							p.sendMessage(ChatColor.RED + "That city isn't owned by your race!");

@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.md_5.bungee.api.ChatColor;
 
 public enum Race {
-	HUMAN(Material.STONE_SWORD){
+	HUMAN(Material.STONE_SWORD, 0){
 		{
 			lore.add("You are human.");
 			lore.add("");
@@ -30,7 +30,7 @@ public enum Race {
 			kits.add(Kit.FARMER);
 		}
 	},
-	DWARF(Material.IRON_PICKAXE){
+	DWARF(Material.IRON_PICKAXE, 1000){
 		{
 			lore.add("You are dwarvish.");
 			lore.add("");
@@ -47,7 +47,7 @@ public enum Race {
 			kits.add(Kit.MINER);
 		}
 	},
-	ELF(Material.BOW){
+	ELF(Material.BOW, 5000){
 		{
 			lore.add("You are elvish.");
 			lore.add("");
@@ -63,7 +63,7 @@ public enum Race {
 			kits.add(Kit.ARCHER);
 		}
 	},
-	NONE(Material.BEDROCK){
+	NONE(Material.BEDROCK, 0){
 		{
 			
 		}
@@ -78,16 +78,18 @@ public enum Race {
 	ItemStack icon;
 	List<String> lore = new ArrayList<String>();
 	List<Kit> kits = new ArrayList<Kit>();
+	int cost;
 	
 	/**
 	 * 
 	 * @param m
 	 */
-	Race(Material m){
+	Race(Material m, int cost){
 		this.icon = new ItemStack(m);
 		ItemMeta meta = icon.getItemMeta();
 		meta.setDisplayName(getName());
 		icon.setItemMeta(meta);
+		this.cost = cost;
 	}
 	
 	/**
@@ -105,6 +107,10 @@ public enum Race {
 		icon.setItemMeta(meta);
 	}
 	
+	public int getCost(){
+	    return this.cost;
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -119,7 +125,7 @@ public enum Race {
 	 * @return
 	 */
 	public boolean doesPlayerOwnRace(Player p){
-		return p.isOp() || p.hasPermission("fantasy.race." + getName().toLowerCase());
+		return p.isOp() || p.hasPermission("fantasy.race." + getName().toLowerCase()) || this == Race.HUMAN;
 	}
 	
 	public List<Kit> getKits(){

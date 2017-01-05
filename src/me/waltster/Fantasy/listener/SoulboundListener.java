@@ -44,7 +44,11 @@ public class SoulboundListener implements Listener{
 	public static boolean isSoulbound(ItemStack item){
 		ItemMeta meta = item.getItemMeta();
 		
-		if(meta.getDisplayName().contains(ChatColor.GOLD + "Souldbound")){
+		if(!item.hasItemMeta()){
+		    return false;
+		}
+		
+		if(meta.getDisplayName().contains(ChatColor.GOLD + "Soulbound")){
 			return true;
 		}
 		

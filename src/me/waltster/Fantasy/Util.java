@@ -1,5 +1,6 @@
 package me.waltster.Fantasy;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +9,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_10_R1.PacketPlayOutNamedEntitySpawn;
 
 public class Util {
 	public static Location parseLocation(String s){
@@ -20,12 +30,17 @@ public class Util {
 		Double x, y, z;
 		
 		if(split.length == 3){
-			w = Bukkit.getWorld("Lobby");
+			w = Bukkit.getWorld("lobby");
 			x = Double.parseDouble(split[0]);
 			y = Double.parseDouble(split[1]);
 			z = Double.parseDouble(split[2]);
 		}else if(split.length == 4){
 			w = Bukkit.getWorld(split[0]);
+			
+			if(w == null){
+			    w = Bukkit.createWorld(new WorldCreator(split[0]));
+			}
+
 			x = Double.parseDouble(split[1]);
 			y = Double.parseDouble(split[2]);
 			z = Double.parseDouble(split[3]);
@@ -118,4 +133,113 @@ public class Util {
 			p.sendMessage("                         ");
 		}
 	}
+	
+	/**
+     * 
+     * @param p
+     * @param r
+     */
+    public static void showBuySelector(Player p){
+        Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Purchase Stuff");
+        
+        ItemStack item1 = new ItemStack(Material.GLOWSTONE_DUST);
+        ItemMeta meta1 = item1.getItemMeta();
+        meta1.setDisplayName(ChatColor.GOLD + "Race");
+        List<String> lore1 = new ArrayList<String>();
+        lore1.add("");
+        lore1.add(ChatColor.GOLD + "Click this to purchase a race");
+        meta1.setLore(lore1);
+        item1.setItemMeta(meta1);
+        inv.addItem(item1);
+        
+        ItemStack item2 = new ItemStack(Material.REDSTONE);
+        ItemMeta meta2 = item2.getItemMeta();
+        meta2.setDisplayName(ChatColor.GOLD + "Class");
+        List<String> lore2 = new ArrayList<String>();
+        lore2.add("");
+        lore2.add(ChatColor.GOLD + "Click this to purchase a class");
+        meta2.setLore(lore2);
+        item2.setItemMeta(meta2);
+        inv.addItem(item2);
+        
+        p.openInventory(inv);
+    }
+    
+    public static void showClassBuySelector(Player p){
+        Inventory inv = Bukkit.createInventory(p, ((Kit.values().length + 8) / 9) * 9, "Buy a Class");
+        
+        for(Race r : Race.values()){
+            for(Kit k : r.kits){
+                if(k.icon.getType() == Material.BEDROCK){
+                    continue;
+                }
+                
+                ItemStack item = k.icon.clone();
+                ItemMeta meta = item.getItemMeta();
+                List<String> lore = meta.getLore();
+                
+                lore.add(ChatColor.AQUA + "----------");
+               
+                if(k.doesPlayerOwnClass(p)){
+                    lore.add(ChatColor.GREEN + "Unlocked");
+                }else{
+                    lore.add(ChatColor.RED + "Locked: " + ChatColor.WHITE + k.getCost() + ChatColor.RED + " Royals to unlock");
+                }
+                
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+                inv.addItem(item);
+            }
+        }
+        
+        p.openInventory(inv);
+    }
+    
+    public static void showRaceBuySelector(Player p){
+        Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Buy a Race");
+        
+        for(Race r : Race.values()){
+            if(r.icon.getType() == Material.BEDROCK){
+                continue;
+            }
+            
+            ItemStack item = r.icon.clone();
+            ItemMeta meta = item.getItemMeta();
+            List<String> lore = meta.getLore();
+            
+            lore.add(ChatColor.AQUA + "----------");
+            
+            if(r.doesPlayerOwnRace(p)){
+                lore.add(ChatColor.GREEN + "Unlocked");
+            }else{
+                lore.add(ChatColor.RED + "Locked: " + ChatColor.WHITE + r.getCost() + ChatColor.RED + " Royals to unlock");
+            }
+            
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+            inv.addItem(item);
+        }
+        
+        p.closeInventory();
+        p.openInventory(inv);
+    }
+    
+    public static void updatePlayerName(Player p, String newName){
+        EntityHuman eh = ((CraftPlayer)p).getHandle();
+        PacketPlayOutEntityDestroy p29 = new PacketPlayOutEntityDestroy(new int[]{p.getEntityId()});
+        PacketPlayOutNamedEntitySpawn p20 = new PacketPlayOutNamedEntitySpawn(eh);
+        try {
+            Field profileField = p20.getClass().getDeclaredField("b");
+            profileField.setAccessible(true);
+            profileField.set(p20, new net.minecraft.server.v1_10_R1.GameProfile(""+p.getEntityId(), newName));
+        } catch (Exception e) {
+            Bukkit.broadcastMessage("Not Work!");
+        }
+        for(Player o : Bukkit.getOnlinePlayers()){
+            if(!o.getName().equals(p.getName())){
+                ((CraftPlayer)o).getHandle().playerConnection.sendPacket(p29);
+                ((CraftPlayer)o).getHandle().playerConnection.sendPacket(p20);
+            }
+        }
+    }
 }

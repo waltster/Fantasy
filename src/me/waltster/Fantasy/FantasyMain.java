@@ -2,22 +2,28 @@ package me.waltster.Fantasy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.waltster.Fantasy.command.CommandClass;
+import me.waltster.Fantasy.command.CommandClassBuy;
 import me.waltster.Fantasy.command.CommandDie;
 import me.waltster.Fantasy.command.CommandHelp;
 import me.waltster.Fantasy.command.CommandRace;
+import me.waltster.Fantasy.command.CommandRaceBuy;
+import me.waltster.Fantasy.command.CommandRoyals;
+import me.waltster.Fantasy.command.CommandStats;
+import me.waltster.Fantasy.command.CommandTP;
 import me.waltster.Fantasy.listener.ChatListener;
 import me.waltster.Fantasy.listener.ClassAbilityListener;
 import me.waltster.Fantasy.listener.PlayerListener;
+import me.waltster.Fantasy.listener.ResourceListener;
 import me.waltster.Fantasy.listener.SoulboundListener;
 import me.waltster.Fantasy.listener.WorldListener;
 import me.waltster.Fantasy.manager.CitySignManager;
 import me.waltster.Fantasy.manager.ConfigManager;
+import me.waltster.Fantasy.manager.StatsManager;
 
 public class FantasyMain extends JavaPlugin{
 	private Location lobbySpawnLocation;
@@ -29,7 +35,9 @@ public class FantasyMain extends JavaPlugin{
 	private PlayerListener playerListener;
 	private SoulboundListener soulboundListener;
 	private WorldListener worldListener;
+	private ResourceListener resourceListener;
 	private World currentMap;
+	private StatsManager statsManager;
 	
 	@Override
 	public void onEnable(){
@@ -39,12 +47,14 @@ public class FantasyMain extends JavaPlugin{
 		this.pluginManager = this.getServer().getPluginManager();
 		this.configManager = new ConfigManager(this);
 		this.citySignManager = new CitySignManager(this);
+		this.statsManager = new StatsManager(this, this.configManager);
 		
 		this.chatListener = new ChatListener();
 		this.classAbilityListener = new ClassAbilityListener(this);
 		this.playerListener = new PlayerListener(this);
 		this.soulboundListener = new SoulboundListener();
 		this.worldListener = new WorldListener(this);
+		this.resourceListener = new ResourceListener(this);
 		
 		this.configManager.loadConfigurations("config.yml", "maps.yml", "messages.yml");
 		this.pluginManager.registerEvents(chatListener, this);
@@ -52,6 +62,8 @@ public class FantasyMain extends JavaPlugin{
 		this.pluginManager.registerEvents(playerListener, this);
 		this.pluginManager.registerEvents(soulboundListener, this);
 		this.pluginManager.registerEvents(worldListener, this);
+		this.pluginManager.registerEvents(resourceListener, this);
+		
 		this.getLogger().info("Event listeners registered");
 		
 		this.lobbySpawnLocation = Util.parseLocation(this.configManager.getConfiguration("maps.yml").getConfig().getString("lobby.spawn"));
@@ -65,11 +77,24 @@ public class FantasyMain extends JavaPlugin{
 		getCommand("die").setExecutor(new CommandDie(this));
 		getCommand("race").setExecutor(new CommandRace());
 		getCommand("class").setExecutor(new CommandClass());
+		getCommand("buyclass").setExecutor(new CommandClassBuy());
+		getCommand("buyrace").setExecutor(new CommandRaceBuy());
+		getCommand("stats").setExecutor(new CommandStats(this.statsManager));
+		getCommand("royals").setExecutor(new CommandRoyals(this));
+		getCommand("fartp").setExecutor(new CommandTP());
 	}
 	
 	@Override
 	public void onDisable(){
+		this.getLogger().info("Saving configurations");
 		
+		this.configManager.getConfiguration("config.yml").save();
+		this.configManager.getConfiguration("maps.yml");
+		this.configManager.loadConfigurations("config.yml", "maps.yml", "messages.yml");
+	}
+	
+	public StatsManager getStatsManager(){
+	    return this.statsManager;
 	}
 	
 	public ConfigManager getConfigManager(){
