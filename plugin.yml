@@ -17,7 +17,5 @@ commands:
     description: Purchase a race with Royals
   stats:
     description: View your stats
-  royals:
-    description: /royals <get/give/take/set> <player> <amount>
   fartp:
     description: Teleport a player to a different world.

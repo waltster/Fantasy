@@ -20,11 +20,12 @@ public class ChatListener implements Listener {
 		String msg = "";
 		
 		if(meta.getRace() != Race.NONE){
-			msg = ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + meta.getRace().getName() + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage();
+			msg = ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + meta.getRace().getName() + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getPlayer().getDisplayName() + ": " + e.getMessage();
 		}else{
-			msg = ChatColor.GOLD + "[" + Util.getChatColor(meta.getRace()) + "Lobby" + ChatColor.GOLD + "] " + ChatColor.WHITE + e.getMessage();
+			msg = ChatColor.GOLD + "[L] " + ChatColor.WHITE + e.getPlayer().getDisplayName() + ": " + e.getMessage();
 		}
 		
-		Bukkit.broadcastMessage(msg);
+		e.setMessage(msg);
+		//Bukkit.broadcastMessage(msg);
 	}
 }

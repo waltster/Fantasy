@@ -14,7 +14,7 @@ import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.Util;
 import net.md_5.bungee.api.ChatColor;
 
-public class CitySignManager {
+public class CityJoinSignManager {
 	private FantasyMain main;
 	/**
 	 * Key: City name
@@ -26,7 +26,7 @@ public class CitySignManager {
 	 * 
 	 * @param main
 	 */
-	public CitySignManager(FantasyMain main){
+	public CityJoinSignManager(FantasyMain main){
 		this.main = main;
 		this.signs = new HashMap<String, ArrayList<Location>>();
 	}
@@ -89,11 +89,12 @@ public class CitySignManager {
 			if(block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST){
 				Sign sign = (Sign)block.getState();
 				
-				sign.setLine(0, ChatColor.GOLD + "[City]");
-				sign.setLine(1, ChatColor.AQUA + cityName);
-				
+				sign.setLine(0, ChatColor.WHITE + "[" + ChatColor.GOLD + "City" + ChatColor.WHITE + "]");
+                sign.setLine(1, ChatColor.GOLD + cityName);
+                
 				String race = main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("cities." + cityName + ".race").toUpperCase();
 				sign.setLine(2, ChatColor.GOLD + race);
+				sign.setLine(3, ChatColor.BOLD + "" + ChatColor.GOLD + "Click to Join!");
 				sign.update(true);
 			}
 		}

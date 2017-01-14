@@ -12,7 +12,6 @@ import me.waltster.Fantasy.command.CommandDie;
 import me.waltster.Fantasy.command.CommandHelp;
 import me.waltster.Fantasy.command.CommandRace;
 import me.waltster.Fantasy.command.CommandRaceBuy;
-import me.waltster.Fantasy.command.CommandRoyals;
 import me.waltster.Fantasy.command.CommandStats;
 import me.waltster.Fantasy.command.CommandTP;
 import me.waltster.Fantasy.listener.ChatListener;
@@ -21,7 +20,8 @@ import me.waltster.Fantasy.listener.PlayerListener;
 import me.waltster.Fantasy.listener.ResourceListener;
 import me.waltster.Fantasy.listener.SoulboundListener;
 import me.waltster.Fantasy.listener.WorldListener;
-import me.waltster.Fantasy.manager.CitySignManager;
+import me.waltster.Fantasy.manager.CityCaptureSignManager;
+import me.waltster.Fantasy.manager.CityJoinSignManager;
 import me.waltster.Fantasy.manager.ConfigManager;
 import me.waltster.Fantasy.manager.StatsManager;
 
@@ -29,7 +29,8 @@ public class FantasyMain extends JavaPlugin{
 	private Location lobbySpawnLocation;
 	private ConfigManager configManager;
 	private PluginManager pluginManager;
-	private CitySignManager citySignManager;
+	private CityJoinSignManager citySignManager;
+	private CityCaptureSignManager cityCaptureSignManager;
 	private ChatListener chatListener;
 	private ClassAbilityListener classAbilityListener;
 	private PlayerListener playerListener;
@@ -38,6 +39,7 @@ public class FantasyMain extends JavaPlugin{
 	private ResourceListener resourceListener;
 	private World currentMap;
 	private StatsManager statsManager;
+	private ItemMessage messageManager;
 	
 	@Override
 	public void onEnable(){
@@ -46,8 +48,10 @@ public class FantasyMain extends JavaPlugin{
 		
 		this.pluginManager = this.getServer().getPluginManager();
 		this.configManager = new ConfigManager(this);
-		this.citySignManager = new CitySignManager(this);
+		this.citySignManager = new CityJoinSignManager(this);
+		this.cityCaptureSignManager = new CityCaptureSignManager(this);
 		this.statsManager = new StatsManager(this, this.configManager);
+		this.messageManager = new ItemMessage(this);
 		
 		this.chatListener = new ChatListener();
 		this.classAbilityListener = new ClassAbilityListener(this);
@@ -80,7 +84,6 @@ public class FantasyMain extends JavaPlugin{
 		getCommand("buyclass").setExecutor(new CommandClassBuy());
 		getCommand("buyrace").setExecutor(new CommandRaceBuy());
 		getCommand("stats").setExecutor(new CommandStats(this.statsManager));
-		getCommand("royals").setExecutor(new CommandRoyals(this));
 		getCommand("fartp").setExecutor(new CommandTP());
 	}
 	
@@ -89,8 +92,8 @@ public class FantasyMain extends JavaPlugin{
 		this.getLogger().info("Saving configurations");
 		
 		this.configManager.getConfiguration("config.yml").save();
-		this.configManager.getConfiguration("maps.yml");
-		this.configManager.loadConfigurations("config.yml", "maps.yml", "messages.yml");
+		this.configManager.getConfiguration("maps.yml").save();
+		this.configManager.getConfiguration("stats.yml").save();
 	}
 	
 	public StatsManager getStatsManager(){
@@ -101,11 +104,23 @@ public class FantasyMain extends JavaPlugin{
 		return this.configManager;
 	}
 	
+	public CityJoinSignManager getCityJoinSignManager(){
+	    return this.citySignManager;
+	}
+	
+	public CityCaptureSignManager getCityCaptureSignManager(){
+	    return this.cityCaptureSignManager;
+	}
+	
 	public Location getLobbySpawn(){
 		return this.lobbySpawnLocation;
 	}
 	
 	public World getMap(){
 		return this.currentMap;
+	}
+	
+	public ItemMessage getItemMessageManager(){
+	    return this.messageManager;
 	}
 }

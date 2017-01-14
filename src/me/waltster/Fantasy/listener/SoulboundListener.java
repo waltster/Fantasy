@@ -23,11 +23,12 @@ public class SoulboundListener implements Listener{
 		Player p = event.getPlayer();
 		Item i = event.getItemDrop();
 		
-		if(isSoulbound(i.getItemStack())){
-			p.playSound(p.getLocation(), Sound.ENTITY_BLAZE_HURT, 1F, 0.5F);
+		if(i != null){
+		    if(isSoulbound(i.getItemStack())){
+	            p.playSound(p.getLocation(), Sound.ENTITY_BLAZE_HURT, 1F, 0.5F);
+	            event.getItemDrop().remove();
+		    }
 		}
-		
-		event.getItemDrop().remove();
 	}
 	
 	@EventHandler
@@ -42,6 +43,10 @@ public class SoulboundListener implements Listener{
 	}
 	
 	public static boolean isSoulbound(ItemStack item){
+	    if(!item.hasItemMeta()){
+	        return false;
+	    }
+	    
 		ItemMeta meta = item.getItemMeta();
 		
 		if(!item.hasItemMeta()){
@@ -56,9 +61,9 @@ public class SoulboundListener implements Listener{
 	}
 	
 	public static void soulbind(ItemStack item){
-		ItemMeta meta = item.getItemMeta();
-		
-		if(item.getType() != Material.AIR){
+		if(item.getType() != Material.AIR && item.hasItemMeta()){
+		    ItemMeta meta = item.getItemMeta();
+		    
 			if(!meta.hasLore()){
 				meta.setLore(Arrays.asList(ChatColor.GOLD + "Soulbound"));
 			}else{

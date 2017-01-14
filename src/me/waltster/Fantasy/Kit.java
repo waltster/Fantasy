@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import me.waltster.Fantasy.listener.SoulboundListener;
-import net.md_5.bungee.api.ChatColor;
 
 public enum Kit {
 	/**
@@ -102,7 +102,7 @@ public enum Kit {
 			lore.add("formitable foe in any sea-based");
 			lore.add("combat. You get +1 attack when");
 			lore.add("in water, and if you're in a boat");
-			lore.add("then you get +2.");
+			lore.add("then you get +2 defense.");
 		}
 	},
 	/**
@@ -142,7 +142,7 @@ public enum Kit {
 			lore.add("items, you've mastered the");
 			lore.add("ability to turn your smelted");
 			lore.add("ingots into true art. You are");
-			lore.add("immune to fire as well.");
+			lore.add("immune to fire.");
 			
 			spawnItems.add(new ItemStack(Material.STONE_SWORD));
 			spawnItems.add(new ItemStack(Material.WOOD_AXE));
@@ -215,6 +215,34 @@ public enum Kit {
 			};
 		}
 	},
+	ENCHANTER(Material.EXP_BOTTLE, 5000){
+        {
+            lore.add("You are the enchanter.");
+            lore.add("");
+            lore.add("Expirience? You got it.");
+            lore.add("Use your talent for infusing");
+            lore.add("magic with physical objects");
+            lore.add("to become one of the most powerful");
+            lore.add("adversaries on the map. Spawn");
+            lore.add("with a dagger, xp, and a few");
+            lore.add("books to help you out.");
+            lore.add("");
+            lore.add("This class can use Enchanting Tables");
+            
+            spawnItems.add(new ItemStack(Material.WOOD_SWORD));
+            spawnItems.add(new ItemStack(Material.EXP_BOTTLE, 5));
+            spawnItems.add(new ItemStack(Material.BOOK, 8));
+            spawnItems.add(new ItemStack(Material.BOOK_AND_QUILL, 1));
+            spawnItems.add(new ItemStack(Material.MELON, 10));
+            
+            armor = new ItemStack[]{
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.LEATHER_CHESTPLATE),
+                    new ItemStack(Material.AIR),
+            };
+        }
+    },
 	NONE(Material.BEDROCK, 0){
 		{
 		}
@@ -300,7 +328,6 @@ public enum Kit {
 		}else if(this == Kit.BUILDER){
 			p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true), true);
 		}else if(this == Kit.MINER){
-			p.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, Integer.MAX_VALUE, 0, true), true);
 			p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, true), true);
 		}else if(this == Kit.WARRIOR){
 			p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true), true);

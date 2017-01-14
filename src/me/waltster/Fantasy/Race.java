@@ -30,7 +30,7 @@ public enum Race {
 			kits.add(Kit.FARMER);
 		}
 	},
-	DWARF(Material.IRON_PICKAXE, 1000){
+	DWARF(Material.IRON_PICKAXE, 5000){
 		{
 			lore.add("You are dwarvish.");
 			lore.add("");
@@ -47,7 +47,7 @@ public enum Race {
 			kits.add(Kit.MINER);
 		}
 	},
-	ELF(Material.BOW, 5000){
+	ELF(Material.BOW, 7500){
 		{
 			lore.add("You are elvish.");
 			lore.add("");
@@ -111,6 +111,17 @@ public enum Race {
 	    return this.cost;
 	}
 	
+	public String getLetter(){
+	    if(this == Race.DWARF){
+	        return ChatColor.GRAY + "D";
+	    }else if(this == Race.ELF){
+	        return ChatColor.GREEN + "E";
+	    }else if(this == Race.HUMAN){
+	        return ChatColor.AQUA + "H";
+	    }
+	    
+	    return ChatColor.WHITE + "L";
+	}
 	/**
 	 * 
 	 * @return
@@ -154,8 +165,8 @@ public enum Race {
 			if(r.doesPlayerOwnRace(p)){
 				lore.add(ChatColor.GREEN + "Unlocked");
 			}else{
-				lore.add(ChatColor.RED + "Locked. Visit the store at");
-				lore.add(ChatColor.RED + "Shotbow.net to unlock.");
+				lore.add(ChatColor.RED + "Locked. Unlock");
+				lore.add(ChatColor.RED + "with Royals");
 			}
 			
 			meta.setLore(lore);

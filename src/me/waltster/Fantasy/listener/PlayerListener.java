@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -28,6 +29,8 @@ import me.waltster.Fantasy.PlayerMeta;
 import me.waltster.Fantasy.Race;
 import me.waltster.Fantasy.StatType;
 import me.waltster.Fantasy.Util;
+import me.waltster.Fantasy.api.CityCaptureEvent;
+import me.waltster.ServerBase.Main;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -64,14 +67,11 @@ public class PlayerListener implements Listener{
 		// Change this to whatever you want. Right now it just loads the configurable message from 'messages.yml'.
 		p.sendMessage(ChatColor.GOLD + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.player_join"));
 		
-		 
+		
 		if(p.hasPlayedBefore() || PlayerMeta.getPlayerMeta(p).isAlive()){
 			p.sendMessage(ChatColor.GOLD + "Sending you to your previous position");
-			Util.updatePlayerName(p, ChatColor.GOLD + "[" + ChatColor.WHITE + PlayerMeta.getPlayerMeta(p).getRace().getName() + ChatColor.GOLD + "] " + p.getName());
 			return;
 		}else{
-		    Util.updatePlayerName(p, ChatColor.GOLD + "[" + "Lobby" + ChatColor.GOLD + "] " + p.getName());
-
 			// I wrote a method in the utilities class to clean up this area. We have to pass the
 			// location because there's no static instance of FantasyMain to use with Util.
 			Util.sendPlayerToLobby(p, main.getLobbySpawn());
@@ -106,6 +106,8 @@ public class PlayerListener implements Listener{
 					event.setCancelled(true);
 					// Set this to whatever you want. Right now it just uses a pre-configured message from 'messages.yml'
 					p1.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cannot_harm_race"));
+				}else if(PlayerMeta.getPlayerMeta(p1).getKit() == Kit.WARRIOR){
+				    event.setDamage(event.getDamage() + 1);
 				}
 			}
 		}
@@ -171,6 +173,7 @@ public class PlayerListener implements Listener{
 				// Send the player a message that he died
 				p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.you_died"));
 				// Send the player to the lobby
+				Util.updatePlayerSkin(p, Race.NONE);
 				Util.sendPlayerToLobby(p, main.getLobbySpawn());
 			}
 		}, 20*15); // <-- number is the number of ticks. Each tick is 1/20th of a second, so 30*20 is 30s.
@@ -185,11 +188,8 @@ public class PlayerListener implements Listener{
 	public void onDeadMove(PlayerMoveEvent event){
 		Player p = event.getPlayer();
 		
-		// If the movement was just looking around then permit it. We are okay with the player looking around,
-		// just not moving.
 		if(event.getFrom().getBlock().getLocation() != p.getLocation().getBlock().getLocation() && PlayerMeta.getPlayerMeta(p).needsRevived()){
 			event.setCancelled(true);
-			// Send the player a pre-configured message that they can't move.
 			p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cant_move_while_dead"));
 		}
 	}
@@ -323,41 +323,31 @@ public class PlayerListener implements Listener{
 	public void onPlayerInteract(PlayerInteractEvent event){
 		Player p = event.getPlayer();
 		
-		// If the player clicked with an item in their hand then we need to check what it was.
 		if(event.getItem() != null){
-			// If the item was the Race selector then open it
 			if(event.getItem().getType() == Material.EYE_OF_ENDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Select Race and Class")){
 				event.setCancelled(true);
 				Race.showRaceSelector(p);
 			}
-			// If the item was revival powder then use it
 			else if(event.getItem().getType() == Material.BLAZE_POWDER && event.getItem().getItemMeta().getDisplayName().startsWith(ChatColor.GOLD + "Revival Powder")){
 				event.setCancelled(true);
 	
-				// Get all entities within half a block of the player's eyeline.
-				Collection<Entity> entities = Bukkit.getWorld("").getNearbyEntities(p.getEyeLocation(), 0.5, 0.5, 0.5);
+				Collection<Entity> entities = Bukkit.getWorld(event.getPlayer().getLocation().getWorld().getName()).getNearbyEntities(p.getEyeLocation(), 0.5, 0.5, 0.5);
 				
-				// If there is more than one entity inside that eye-line then tell the player to focus on one.
 				if(entities.size() > 1){
 					p.sendMessage("Please focus on one entity.");
 				}
 				else{
-					// Fetch the entity that the player is focused on
 					Entity e = entities.iterator().next();
 					
-					// We only use revival powder on players, so filter non-player entities out
 					if(e instanceof Player){
 						Player p1 = (Player)e;
 					
-						// If the player needs revived then revive them, but otherwise don't use the powder.
 						if(PlayerMeta.getPlayerMeta(p1).needsRevived()){
-							// Update the player's state and tell both players it worked
 							PlayerMeta.getPlayerMeta(p1).setNeedsRevived(false);
 							p1.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_message") + p.getDisplayName());
 							p.sendMessage(ChatColor.GREEN + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revived_sucessfully"));
 							
 							
-							// Remove the item from the player's inventory
 							ItemStack toRemove = event.getItem().clone();
 							toRemove.setAmount(1);
 							p.getInventory().remove(toRemove);
@@ -371,42 +361,83 @@ public class PlayerListener implements Listener{
 			return;
 		}
 		
-		// If the player clicked a block then we need to check what it was
 		if(event.getClickedBlock() != null){
 			Material mat = event.getClickedBlock().getType();
 			
-			// If the player clicked a sign then check if it was a city-join sign.
 			if(mat == Material.SIGN_POST || mat == Material.WALL_SIGN || mat == Material.SIGN){
 				Sign sign = (Sign)event.getClickedBlock().getState();
 				
-				// If the sign is a city sign then we need to send the player to it
-				if(sign.getLine(0).contains(ChatColor.GOLD + "[City]")){
-					event.setCancelled(true);
-					// Fetch the city name from the sign and get the configuration for that city.
-					String cityName = ChatColor.stripColor(sign.getLine(1)).toLowerCase();
-					YamlConfiguration config = main.getConfigManager().getConfiguration("maps.yml").getConfig();
-					
-					// If the city is in the configuration then let's send the player
-					if(config.getString("cities." + cityName + ".spawn") != null){
-						// Get the spawn location
-					    Location citySpawn = Util.parseLocation(main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("cities." + cityName + ".spawn"));
-						// Make sure the city is owned by the Player's race and if not then send them a message saying so
-						if(Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase()) != PlayerMeta.getPlayerMeta(p).getRace()){
-							p.sendMessage(ChatColor.RED + "That city isn't owned by your race!");
-							return;
-						}
-						// If the city is owned by the player's race then send them there
-						else{
-							Util.sendPlayerToGame(p, citySpawn);
-						}
-					}
-					// Oops! There wasn't a spawn in the configuration for the city. Tell the player and log it.
-					else{
-						p.sendMessage(ChatColor.RED + "City sign not working");
-						main.getLogger().warning(ChatColor.RED + "City " + cityName + " was missing spawn location in maps.yml.");
-					}
+				if(sign.getLine(0).contains(ChatColor.WHITE + "[" + ChatColor.GOLD + "City" + ChatColor.WHITE + "]")){
+				    if(sign.getLine(3).contains("Join")){
+				        event.setCancelled(true);
+	                    String cityName = ChatColor.stripColor(sign.getLine(1)).toLowerCase();
+	                    YamlConfiguration config = main.getConfigManager().getConfiguration("maps.yml").getConfig();
+	                    
+	                    if(config.getString("cities." + cityName + ".spawn") != null){
+	                        Location citySpawn = Util.parseLocation(main.getConfigManager().getConfiguration("maps.yml").getConfig().getString("cities." + cityName + ".spawn"));
+	                        
+	                        if(Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase()) != PlayerMeta.getPlayerMeta(p).getRace()){
+	                            p.sendMessage(ChatColor.RED + "That city isn't owned by your race!");
+	                            return;
+	                        }
+	                        else{
+	                            Util.sendPlayerToGame(p, citySpawn);
+	                        }
+	                    }else{
+	                        p.sendMessage(ChatColor.RED + "City sign not working");
+	                        main.getLogger().warning(ChatColor.RED + "City " + cityName + " was missing spawn location in maps.yml.");
+	                    }
+				    }else if(sign.getLine(3).contains("Capture")){
+				        event.setCancelled(true);
+                        String cityName = ChatColor.stripColor(sign.getLine(1)).toLowerCase();
+                        YamlConfiguration config = main.getConfigManager().getConfiguration("maps.yml").getConfig();
+                        
+                        if(Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase()) == PlayerMeta.getPlayerMeta(event.getPlayer()).getRace()){
+                            event.getPlayer().sendMessage(ChatColor.RED + "City already captured by your race!");
+                        }else{
+                            Race r = Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase());
+                            
+                            CityCaptureEvent event1 = new CityCaptureEvent(cityName, r, event.getPlayer());
+                            main.getServer().getPluginManager().callEvent(event1);
+                            
+                            if(event1.isCancelled()){
+                                return;
+                            }
+                            
+                            main.getConfigManager().getConfiguration("maps.yml").getConfig().set("cities." + cityName + ".race", r.name().toLowerCase());
+                            main.getConfigManager().getConfiguration("maps.yml").save();
+                            sign.setLine(2, ChatColor.GOLD + r.getName());
+                            
+                            // Reload signs
+                            main.getCityJoinSignManager().loadCitySigns();
+                            main.getCityJoinSignManager().updateSigns(cityName);
+                            main.getCityCaptureSignManager().loadCitySigns();
+                            main.getCityCaptureSignManager().updateSigns(cityName);
+                            
+                            Bukkit.broadcastMessage(ChatColor.WHITE + event.getPlayer().getDisplayName() + ChatColor.GOLD + " has captured " + ChatColor.WHITE + cityName);
+                            
+                            Race pRace = PlayerMeta.getPlayerMeta(event.getPlayer()).getRace();
+                            
+                            for(Player p1 : Bukkit.getOnlinePlayers()){
+                                if(PlayerMeta.getPlayerMeta(p).getRace() == pRace){
+                                    p1.sendMessage(ChatColor.BLUE + "+15 Royals");
+                                    main.getStatsManager().incrementStat(StatType.ROYALS, p1, 15);
+                                }
+                            }
+                        }
+				    }
 				}
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onDeath(EntityDeathEvent event){
+	    EntityType type = event.getEntity().getType();
+	    
+	    if(type != EntityType.PLAYER){
+	        event.getEntity().getKiller().sendMessage(ChatColor.GREEN + "+1 Royals");
+	        Main.getRoyalsManager().incrementRoyals(event.getEntity().getKiller());
+	    }
 	}
 }

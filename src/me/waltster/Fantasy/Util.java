@@ -1,6 +1,5 @@
 package me.waltster.Fantasy;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +9,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.server.v1_10_R1.EntityHuman;
-import net.minecraft.server.v1_10_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_10_R1.PacketPlayOutNamedEntitySpawn;
 
 public class Util {
 	public static Location parseLocation(String s){
@@ -124,6 +116,7 @@ public class Util {
 		meta.setNeedsRevived(false);
 		meta.setAlive(true);
 		meta.getKit().giveKitToPlayer(p);
+		Util.updatePlayerSkin(p, meta.getRace());
 		p.sendMessage(ChatColor.GOLD + "Sending you to game");
 		p.teleport(location);
 	}
@@ -224,22 +217,7 @@ public class Util {
         p.openInventory(inv);
     }
     
-    public static void updatePlayerName(Player p, String newName){
-        EntityHuman eh = ((CraftPlayer)p).getHandle();
-        PacketPlayOutEntityDestroy p29 = new PacketPlayOutEntityDestroy(new int[]{p.getEntityId()});
-        PacketPlayOutNamedEntitySpawn p20 = new PacketPlayOutNamedEntitySpawn(eh);
-        try {
-            Field profileField = p20.getClass().getDeclaredField("b");
-            profileField.setAccessible(true);
-            profileField.set(p20, new net.minecraft.server.v1_10_R1.GameProfile(""+p.getEntityId(), newName));
-        } catch (Exception e) {
-            Bukkit.broadcastMessage("Not Work!");
-        }
-        for(Player o : Bukkit.getOnlinePlayers()){
-            if(!o.getName().equals(p.getName())){
-                ((CraftPlayer)o).getHandle().playerConnection.sendPacket(p29);
-                ((CraftPlayer)o).getHandle().playerConnection.sendPacket(p20);
-            }
-        }
+    public static void updatePlayerSkin(Player p, Race r){
+        
     }
 }

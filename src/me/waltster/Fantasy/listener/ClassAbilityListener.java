@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -61,10 +63,23 @@ public class ClassAbilityListener implements Listener{
 		// If the inventory opened was an enchantement table make sure the player was an elf or a dwarf
 		else if(type == InventoryType.ENCHANTING){
 			// If not then tell the player their race can't use that item and cancel the opening
-			if(PlayerMeta.getPlayerMeta(player).getRace() != Race.ELF && PlayerMeta.getPlayerMeta(player).getRace() != Race.DWARF){
+			if(PlayerMeta.getPlayerMeta(player).getRace() != Race.ELF && PlayerMeta.getPlayerMeta(player).getKit() != Kit.ENCHANTER){
 				player.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.race_cant_use_that"));
 				event.setCancelled(true);
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onFireDamage(EntityDamageEvent event){
+	    if(event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK){
+	        if(event.getEntity() instanceof Player){
+	            Player p = (Player)event.getEntity();
+	            
+	            if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.BLACKSMITH){
+	                event.setCancelled(true);
+	            }
+	        }
+	    }
 	}
 }

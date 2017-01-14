@@ -23,21 +23,26 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Dye;
 
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.Kit;
 import me.waltster.Fantasy.PlayerMeta;
+import me.waltster.ServerBase.Main;
+import net.md_5.bungee.api.ChatColor;
 
 public class ResourceListener implements Listener {
     private class Resource {
@@ -61,28 +66,51 @@ public class ResourceListener implements Listener {
     public ResourceListener(FantasyMain plugin) {
         this.plugin = plugin;
         
-        addResource(Material.COAL_ORE, 8, 10);
-        addResource(Material.IRON_ORE, 10, 20);
-        addResource(Material.GOLD_ORE, 15, 20);
-        addResource(Material.LAPIS_ORE, 10, 30);
-        addResource(Material.DIAMOND_ORE, 12, 30);
-        addResource(Material.EMERALD_ORE, 18, 40);
-        addResource(Material.REDSTONE_ORE, 10, 20);
-        addResource(Material.GLOWING_REDSTONE_ORE, 10, 20);
-        addResource(Material.LOG, 2, 10);
+        addResource(Material.COAL_ORE, 8, 30);
+        addResource(Material.IRON_ORE, 10, 50);
+        addResource(Material.GOLD_ORE, 15, 60);
+        addResource(Material.LAPIS_ORE, 10, 50);
+        addResource(Material.DIAMOND_ORE, 12, 70);
+        addResource(Material.EMERALD_ORE, 18, 80);
+        addResource(Material.REDSTONE_ORE, 10, 40);
+        addResource(Material.GLOWING_REDSTONE_ORE, 10, 40);
+        addResource(Material.LOG, 2, 30);
         addResource(Material.GRAVEL, 2, 20);
-        addResource(Material.MELON_BLOCK, 0, 10);
+        addResource(Material.MELON_BLOCK, 0, 20);
     }
 
     @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = false)
     public void onResourceBreak(BlockBreakEvent e) {
+        if(e.getBlock().getType() == Material.WALL_SIGN || e.getBlock().getType() == Material.SIGN_POST){
+            Sign sign = (Sign)e.getBlock().getState();
+            
+            if(sign.getLine(0).contains(ChatColor.WHITE + "[" + ChatColor.GOLD + "City" + ChatColor.WHITE + "]")){
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(ChatColor.RED + "You cannot break city signs");
+            }
+        }
+        
+        if(e.getBlock().getType() == Material.LAPIS_ORE){
+            e.setCancelled(true);
+            Dye d = new Dye();
+            d.setColor(DyeColor.BLUE);
+            ItemStack i = d.toItemStack();
+            i.setAmount(getDropQuantity(Material.LAPIS_ORE));
+            
+            e.getPlayer().getInventory().addItem(i.clone());
+            e.getBlock().getWorld().playEffect(e.getBlock().getLocation(), Effect.STEP_SOUND, e.getBlock().getTypeId());
+            queueRespawn(e.getBlock());
+            return;
+        }
+        
         if (resources.containsKey(e.getBlock().getType())) {
             e.setCancelled(true);
             breakResource(e.getPlayer(), e.getBlock());
             e.getBlock().getWorld().playEffect(e.getBlock().getLocation(), Effect.STEP_SOUND, e.getBlock().getTypeId());
         } else if (queue.contains(e.getBlock().getLocation())) {
             e.setCancelled(true);
+            return;
         }
     }
 
@@ -116,11 +144,11 @@ public class ResourceListener implements Listener {
             for (ItemStack stack : drops)
                 if (stack.getAmount() > 0)
                     player.getInventory().addItem(stack);
-        } else {
+        }else {
             Material dropType = resource.drop;
             int qty = getDropQuantity(type);
             if ((type.name().contains("ORE") && kit == Kit.MINER)
-                    || (type.name().contains("LOG") && kit == Kit.FARMER))
+                    || (type.name().contains("LOG") && kit == Kit.FARMER || (type.name().contains("MELON") || type.name().contains("CROPS") && kit == Kit.FARMER)))
                 qty *= rand.nextFloat() < 0.9 ? 2 : 1;
             player.getInventory().addItem(new ItemStack(dropType, qty));
         }
