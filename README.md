@@ -1,6 +1,6 @@
 # Overview
 
-This is a game I am working on for Shotbow (shotbow.net). The object of the game is to advance yourself and your race further and further as you unlock new places, new items, and new abilities.
+This is a game I am working on for [The Banana Network](banananetwork.us) . The object of the game is to advance yourself and your race further and further as you unlock new places, new items, and new abilities.
 
 You start off choosing one of three races: Elf, Dwarf, or Human. Then you choose a class. A class is either an occupation or a specific talent (eg. Wizard, Blacksmith, Magician)
 
