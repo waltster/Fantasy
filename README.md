@@ -1,6 +1,6 @@
 # Overview
 
-This is a game I am working on for [The Banana Network](banananetwork.us) . The object of the game is to advance yourself and your race further and further as you unlock new places, new items, and new abilities.
+This is a game I am working on for [The Banana Network](http://banananetwork.us) . The object of the game is to advance yourself and your race further and further as you unlock new places, new items, and new abilities.
 
 You start off choosing one of three races: Elf, Dwarf, or Human. Then you choose a class. A class is either an occupation or a specific talent (eg. Wizard, Blacksmith, Magician)
 
@@ -8,6 +8,11 @@ You start off in a city of your choice and must "work" until you've collected en
 
 Once you die you are given 30s to be revived by another player. If you aren't then you are sent back to the
 lobby.
+
+# Dependencies
+* Spigot 1.11 jar file (made for 1.10, but 1.10 jar file doesn't include enchantment classes for some reason)
+* ProtocolLib (1.10 compatible)
+* ServerBase (see my GitHub repository)
 
 # Installing
 

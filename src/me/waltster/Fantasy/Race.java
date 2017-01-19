@@ -1,3 +1,18 @@
+/*
+ * Copyright 2016-2017 Walter Pach, all rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.waltster.Fantasy;
 
 import java.util.ArrayList;
@@ -28,6 +43,7 @@ public enum Race {
 			kits.add(Kit.CIVILIAN);
 			kits.add(Kit.BUILDER);
 			kits.add(Kit.FARMER);
+			kits.add(Kit.MARINER);
 		}
 	},
 	DWARF(Material.IRON_PICKAXE, 5000){
@@ -61,6 +77,7 @@ public enum Race {
 			lore.add("unrivaled when it comes to wood.");
 			
 			kits.add(Kit.ARCHER);
+			kits.add(Kit.ENCHANTER);
 		}
 	},
 	NONE(Material.BEDROCK, 0){
