@@ -4,7 +4,7 @@ This is a game I am working on. The object of the game is to advance yourself an
 
 You start off choosing one of three races: Elf, Dwarf, or Human. Then you choose a class. A class is either an occupation or a specific talent (eg. Wizard, Blacksmith, Magician)
 
-You start off in a city of your choice and must "work" until you've collected enough supplies to go on a quest. Adventure through the world alone or with friends, but be carefull: You only live once.
+You start off in a city of your choice and must "work" until you've collected enough supplies to go on a quest. Adventure through the world alone or with friends, but be careful: You only live once.
 
 Once you die you are given 30s to be revived by another player. If you aren't then you are sent back to the
 lobby.
@@ -31,25 +31,24 @@ Running the server for the first time will generate some configuration files. Ch
 # Permissions
 
 ### Basic Permissions
-* "fantasy.build.lobby" - Allow player to alter blocks in the lobby world
+* ```fantasy.build.lobby``` - Allow player to alter blocks in the lobby world
+* ```fantasy.override.build_protection``` - Override and allow player to place blocks in protected zones
+* ```fantasy.override.combat``` - Override and allow player to harm other players and mobs in a protected zone
 
 ### Race Permissions - Allow player to use Race
-* "fantasy.race.elf"
-* "fantasy.race.dwarf"
-* "fantasy.race.human"
+* ```fantasy.race.elf```
+* ```fantasy.race.dwarf```
+* ```fantasy.race.human```
 
 ### Class Permissions - Allow player to use class
-
-#### Human Classes - Requires Human Race permission
-* "fantasy.class.civilian"
-* "fantasy.class.builder"
-* "fantasy.class.farmer"
-* "fantasy.class.mariner"
-
-#### Dwarf Classes - Requires Dwarf Race permission
-* "fantasy.class.miner"
-* "fantasy.class.blacksmith"
-* "fantasy.class.warrior"
-
-#### Elf Classes - Requires Elf Race permission
-* "fantasy.class.archer"
+* Human Classes - Requires Human Race permission
+  * ```fantasy.class.civilian```
+  * ```fantasy.class.builder```
+  * ```fantasy.class.farmer```
+  * ```fantasy.class.mariner```
+* Dwarf Classes - Requires Dwarf Race permission
+  * ```fantasy.class.miner```
+  * ```fantasy.class.blacksmith```
+  * ```fantasy.class.warrior```
+* Elf Classes - Requires Elf Race permission
+  * ```fantasy.class.archer```

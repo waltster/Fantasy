@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -41,8 +42,6 @@ import org.bukkit.material.Dye;
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.Kit;
 import me.waltster.Fantasy.PlayerMeta;
-import me.waltster.ServerBase.Main;
-import net.md_5.bungee.api.ChatColor;
 
 public class ResourceListener implements Listener {
     private class Resource {

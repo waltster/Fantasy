@@ -19,5 +19,5 @@
 package me.waltster.Fantasy;
 
 public enum StatType {
-    KILLS, DEATHS, ROYALS;
+    KILLS, DEATHS, SHOTBOW_XP;
 }

@@ -54,7 +54,6 @@ public class FantasyMain extends JavaPlugin{
 	private ResourceListener resourceListener;
 	private World currentMap;
 	private StatsManager statsManager;
-	private ItemMessage messageManager;
 	
 	@Override
 	public void onEnable(){
@@ -66,7 +65,6 @@ public class FantasyMain extends JavaPlugin{
 		this.citySignManager = new CityJoinSignManager(this);
 		this.cityCaptureSignManager = new CityCaptureSignManager(this);
 		this.statsManager = new StatsManager(this, this.configManager);
-		this.messageManager = new ItemMessage(this);
 		
 		this.chatListener = new ChatListener();
 		this.classAbilityListener = new ClassAbilityListener(this);
@@ -133,9 +131,5 @@ public class FantasyMain extends JavaPlugin{
 	
 	public World getMap(){
 		return this.currentMap;
-	}
-	
-	public ItemMessage getItemMessageManager(){
-	    return this.messageManager;
 	}
 }

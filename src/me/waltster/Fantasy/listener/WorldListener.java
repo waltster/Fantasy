@@ -65,9 +65,9 @@ public class WorldListener implements Listener{
 	    
 	    for(Player p : Bukkit.getOnlinePlayers()){
 	        if(PlayerMeta.getPlayerMeta(p).getRace() == event.getOldOwner()){
-	            main.getItemMessageManager().sendMessage(p, ChatColor.WHITE + event.getCityName() + ChatColor.RED + " has been taken");
+	            p.sendMessage(ChatColor.WHITE + event.getCityName() + ChatColor.RED + " has been taken");
 	        }else if(PlayerMeta.getPlayerMeta(p).getRace() == newRace){
-	            main.getItemMessageManager().sendMessage(p, ChatColor.WHITE + event.getCityName() + ChatColor.GREEN + " has been taken");
+	            p.sendMessage(ChatColor.WHITE + event.getCityName() + ChatColor.GREEN + " has been taken");
 	        }
 	    }
 	}

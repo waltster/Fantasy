@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.StatType;
-import me.waltster.ServerBase.Main;
 
 public class StatsManager {
     private FantasyMain plugin;
@@ -35,17 +34,16 @@ public class StatsManager {
     }
 
     public int getStat(StatType s, Player p) {
-        if(s == StatType.ROYALS){
-            return Main.getRoyalsManager().getRoyals(p);
+        if(s == StatType.SHOTBOW_XP){
+        	// TODO: Return ShotbowXP
         }
         
         return config.getConfiguration("stats.yml").getConfig().getInt(p.getName() + "." + s.name());
     }
 
     public void setValue(StatType s, Player p, int value) {
-        if(s == StatType.ROYALS){
-            Main.getRoyalsManager().setRoyals(p, value);
-            return;
+        if(s == StatType.SHOTBOW_XP){
+        	// TODO: SET ShotbowXP
         }
         
         config.getConfiguration("stats.yml").getConfig().set(p.getName() + "." + s.name(), value);
@@ -57,11 +55,11 @@ public class StatsManager {
     }
 
     public void incrementStat(StatType s, Player p, int amount) {
-        if(p.hasPermission("network.sponsor.silver")){
+        if(p.hasPermission("silver")){
             amount *= 2;
-        }else if(p.hasPermission("network.sponsor.gold")){
+        }else if(p.hasPermission("gold")){
             amount *= 3;
-        }else if(p.hasPermission("network.sponsor.ruby")){
+        }else if(p.hasPermission("platinum")){
             amount *= 4;
         }
         
