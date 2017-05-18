@@ -58,16 +58,16 @@ public class SoulboundListener implements Listener{
 	}
 	
 	public static boolean isSoulbound(ItemStack item){
+		if(item.getType() == Material.AIR || item.getType() == null){
+			return false;
+		}
+		
 	    if(!item.hasItemMeta()){
 	        return false;
 	    }
 	    
 		ItemMeta meta = item.getItemMeta();
-		
-		if(!item.hasItemMeta()){
-		    return false;
-		}
-		
+
 		if(meta.getDisplayName().contains(ChatColor.GOLD + "Soulbound")){
 			return true;
 		}
@@ -86,6 +86,8 @@ public class SoulboundListener implements Listener{
 				lore.add(ChatColor.GOLD + "Soulbound");
 				meta.setLore(lore);
 			}
+			
+			item.setItemMeta(meta);
 		}
 	}
 }

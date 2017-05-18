@@ -156,8 +156,8 @@ public class PlayerListener implements Listener{
 			event.setDeathMessage(deadName + ChatColor.RED + " was killed by " + killerName);
 			main.getStatsManager().incrementStat(StatType.KILLS, p.getKiller());
 
-			p.getKiller().sendMessage(ChatColor.GREEN + "+3 Royals");
-			main.getStatsManager().incrementStat(StatType.ROYALS, p.getKiller(), 3);
+			p.getKiller().sendMessage(ChatColor.GREEN + "+3 ShotbowXP");
+			main.getStatsManager().incrementStat(StatType.SHOTBOW_XP, p.getKiller(), 3);
 		}
 
 		// Store that the player needs revived before he can move again.
@@ -279,13 +279,14 @@ public class PlayerListener implements Listener{
             String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).toUpperCase();
 
             if(!Race.valueOf(name).doesPlayerOwnRace(p)){
-                int amount = main.getStatsManager().getStat(StatType.ROYALS, p);
+                int amount = main.getStatsManager().getStat(StatType.SHOTBOW_XP, p);
 
                 if(amount >= Race.valueOf(name).getCost()){
                     PermissionUser user = PermissionsEx.getUser(p);
 
-                    main.getStatsManager().setValue(StatType.ROYALS, p, amount - Race.valueOf(name).getCost());
+                    main.getStatsManager().setValue(StatType.SHOTBOW_XP, p, amount - Race.valueOf(name).getCost());
                     user.addPermission("fantasy.race." + name.toLowerCase());
+                    user.save();
                     p.sendMessage(ChatColor.GREEN + "Purchased race " + ChatColor.WHITE + Race.valueOf(name).getName());
                 }else{
                     p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " Royals");
@@ -302,16 +303,17 @@ public class PlayerListener implements Listener{
             String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).toUpperCase();
 
             if(!Kit.valueOf(name).doesPlayerOwnClass(p)){
-                int amount = main.getStatsManager().getStat(StatType.ROYALS, p);
+                int amount = main.getStatsManager().getStat(StatType.SHOTBOW_XP, p);
 
                 if(amount >= Kit.valueOf(name).getCost()){
                     PermissionUser user = PermissionsEx.getUser(p);
 
-                    main.getStatsManager().setValue(StatType.ROYALS, p, amount - Race.valueOf(name).getCost());
+                    main.getStatsManager().setValue(StatType.SHOTBOW_XP, p, amount - Race.valueOf(name).getCost());
                     user.addPermission("fantasy.kit." + name.toLowerCase());
+                    user.save();
                     p.sendMessage(ChatColor.GREEN + "Purchased class " + ChatColor.WHITE + Race.valueOf(name).getName());
                 }else{
-                    p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " Royals");
+                    p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " ShotbowXP");
                 }
             }
         }
@@ -434,8 +436,8 @@ public class PlayerListener implements Listener{
 
                             for(Player p1 : Bukkit.getOnlinePlayers()){
                                 if(PlayerMeta.getPlayerMeta(p).getRace() == pRace){
-                                    p1.sendMessage(ChatColor.BLUE + "+15 Royals");
-                                    main.getStatsManager().incrementStat(StatType.ROYALS, p1, 15);
+                                    p1.sendMessage(ChatColor.BLUE + "+15 ShotbowXP");
+                                    main.getStatsManager().incrementStat(StatType.SHOTBOW_XP, p1, 15);
                                 }
                             }
                         }
