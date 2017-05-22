@@ -265,11 +265,29 @@ public enum Kit {
     },
 	MAN_IN_BLACK(Material.COAL, 5000){
     	{
+    		lore.add("You are the spark.");
+    		lore.add("");
+    		lore.add("Flames and sparks follow your path,");
+    		lore.add("as long as you aren't on anything");
+    		lore.add("flammible. You also have a small knife,");
+    		lore.add("but you're not the strongest person");
     		
+    		spawnItems.add(new ItemStack(Material.WOOD_SWORD));
+            spawnItems.add(new ItemStack(Material.EXP_BOTTLE, 5));
+            spawnItems.add(new ItemStack(Material.BOOK, 8));
+            spawnItems.add(new ItemStack(Material.BOOK_AND_QUILL, 1));
+            spawnItems.add(new ItemStack(Material.MELON, 10));
+
+            armor = new ItemStack[]{
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.LEATHER_CHESTPLATE),
+                    new ItemStack(Material.AIR),
+            };
     	}
     },
 	/* NOTE: Hahaha change name later */
-	SPARKY(Material.FIRE, 5000){
+	SPARKY(Material.ACACIA_DOOR, 5000){
     	{
     		lore.add("You are the spark.");
     		lore.add("");
@@ -277,6 +295,19 @@ public enum Kit {
     		lore.add("as long as you aren't on anything");
     		lore.add("flammible. You also have a small knife,");
     		lore.add("but you're not the strongest person");
+    		
+    		spawnItems.add(new ItemStack(Material.WOOD_SWORD));
+            spawnItems.add(new ItemStack(Material.EXP_BOTTLE, 5));
+            spawnItems.add(new ItemStack(Material.BOOK, 8));
+            spawnItems.add(new ItemStack(Material.BOOK_AND_QUILL, 1));
+            spawnItems.add(new ItemStack(Material.MELON, 10));
+
+            armor = new ItemStack[]{
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.LEATHER_CHESTPLATE),
+                    new ItemStack(Material.AIR),
+            };
     	}
     },
 	NONE(Material.BEDROCK, 0){
@@ -418,7 +449,7 @@ public enum Kit {
 	 * @param r The Race that owns these kits (archer views archer kits, etc.)
 	 */
 	public static void showKitSelector(Player p, Race r){
-		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Select Your Class");
+		Inventory inv = Bukkit.createInventory(p, ((Kit.values().length + 8) / 9) * 9, "Select Your Class");
 
 		for(Kit k : r.getKits()){
 			if(k.icon.getType() == Material.BEDROCK){

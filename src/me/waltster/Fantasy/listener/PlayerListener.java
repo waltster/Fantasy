@@ -212,6 +212,13 @@ public class PlayerListener implements Listener{
 		}else if(PlayerMeta.getPlayerMeta(p).getRace() == Race.GHOST && PlayerMeta.getPlayerMeta(p).abilityEnabled()){
 			if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.MAN_IN_BLACK){
 				p.getWorld().spigot().playEffect(p.getLocation(), Effect.LARGE_SMOKE, 4, 0, 1.25321F * rand.nextInt(4), 2.0F, 1.25321F * rand.nextInt(4), 0.0F, 350, 7);
+			}else if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.SPARKY){
+				p.getWorld().playEffect(p.getLocation(), Effect.LAVA_POP, 0);
+				
+				if(rand.nextInt(3) == 3){
+					p.getWorld().getBlockAt(p.getLocation()).setType(Material.FIRE);
+					p.getWorld().playEffect(p.getLocation(), Effect.FLAME, 0);
+				}
 			}
 		}
 	}

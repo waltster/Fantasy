@@ -93,8 +93,8 @@ public enum Race {
 			lore.add("You cannot use weapons, but you have");
 			lore.add("special abilities unique to your race.");
 			
-			kits.add(Kit.NONE);
-			kits.add(Kit.NONE);
+			kits.add(Kit.MAN_IN_BLACK);
+			kits.add(Kit.SPARKY);
 		}
 	},
 	NONE(Material.BEDROCK, 0){

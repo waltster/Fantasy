@@ -1,3 +1,5 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/16d7a4d0715f4a04a4f7e8663374217f)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=waltster/Fantasy&amp;utm_campaign=Badge_Grade)
+
 # Overview
 
 This is a game I am working on. The object of the game is to advance yourself and your race further and further as you unlock new places, new items, and new abilities.
