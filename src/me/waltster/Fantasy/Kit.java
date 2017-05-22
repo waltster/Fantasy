@@ -32,6 +32,11 @@ import org.bukkit.potion.PotionEffectType;
 
 import me.waltster.Fantasy.listener.SoulboundListener;
 
+/**
+ * Used to provide Kits to the gamemode.
+ * 
+ * @author Walt Pach (walt@waltster.me)
+ */
 public enum Kit {
 	/**
 	 * Human kits.
@@ -45,11 +50,11 @@ public enum Kit {
 			lore.add("but love to explore and");
 			lore.add("work hard. You have basic");
 			lore.add("tools and clothes.");
-			
+
 			spawnItems.add(new ItemStack(Material.WOOD_SWORD));
 			spawnItems.add(new ItemStack(Material.WOOD_AXE));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.LEATHER_LEGGINGS),
@@ -68,12 +73,12 @@ public enum Kit {
 			lore.add("Whether you build walls around");
 			lore.add("cities, or houses for your friends");
 			lore.add("you've got the materials.");
-			
+
 			spawnItems.add(new ItemStack(Material.WOOD_SWORD));
 			spawnItems.add(new ItemStack(Material.STONE_AXE));
 			spawnItems.add(new ItemStack(Material.STONE_PICKAXE));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.LEATHER_LEGGINGS),
@@ -93,14 +98,14 @@ public enum Kit {
 			lore.add("provide for your friends and family.");
 			lore.add("Enjoy plenty of food, and 2x when");
 			lore.add("foraging.");
-			
+
 			spawnItems.add(new ItemStack(Material.WOOD_SWORD));
 			spawnItems.add(new ItemStack(Material.WOOD_SPADE));
 			spawnItems.add(new ItemStack(Material.SEEDS, 32));
 			spawnItems.add(new ItemStack(Material.MELON_SEEDS));
 			spawnItems.add(new ItemStack(Material.WHEAT, 2));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.LEATHER_LEGGINGS),
@@ -133,13 +138,13 @@ public enum Kit {
 			lore.add("to recieve 2x the materials with");
 			lore.add("some mines. As well as a portable");
 			lore.add("furnace with coal.");
-			
+
 			spawnItems.add(new ItemStack(Material.WOOD_SWORD));
 			spawnItems.add(new ItemStack(Material.STONE_PICKAXE));
 			spawnItems.get(1).addEnchantment(Enchantment.DIG_SPEED, 1);
 			spawnItems.add(new ItemStack(Material.COAL, 5));
 			spawnItems.add(new ItemStack(Material.FURNACE, 1));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.LEATHER_LEGGINGS),
@@ -158,12 +163,12 @@ public enum Kit {
 			lore.add("ability to turn your smelted");
 			lore.add("ingots into true art. You are");
 			lore.add("immune to fire.");
-			
+
 			spawnItems.add(new ItemStack(Material.STONE_SWORD));
 			spawnItems.add(new ItemStack(Material.WOOD_AXE));
 			spawnItems.add(new ItemStack(Material.WORKBENCH));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.AIR),
@@ -183,25 +188,25 @@ public enum Kit {
 			lore.add("equiped with a set of armor");
 			lore.add("too. It's a good thing the");
 			lore.add("dwarves have you on their side!");
-			
+
 			spawnItems.add(new ItemStack(Material.STONE_SWORD));
 			spawnItems.get(0).addEnchantment(Enchantment.KNOCKBACK, 1);
 			spawnItems.add(new ItemStack(Material.IRON_AXE));
 			spawnItems.get(1).addEnchantment(Enchantment.DAMAGE_ALL, 2);
 			spawnItems.get(1).addEnchantment(Enchantment.DURABILITY, 1);
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.LEATHER_BOOTS),
 					new ItemStack(Material.LEATHER_LEGGINGS),
 					new ItemStack(Material.IRON_CHESTPLATE),
 					new ItemStack(Material.IRON_HELMET),
 			};
-		
+
 			armor[2].addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
 		}
 	},
-	
+
 	/**
 	 * Elvish classes
 	 */
@@ -217,11 +222,11 @@ public enum Kit {
 			lore.add("With your light equipment, you");
 			lore.add("are given a speed boost while");
 			lore.add("wearing light armor.");
-			
+
 			spawnItems.add(new ItemStack(Material.BOW));
 			spawnItems.add(new ItemStack(Material.ARROW, 16));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
-			
+
 			armor = new ItemStack[]{
 					new ItemStack(Material.AIR),
 					new ItemStack(Material.AIR),
@@ -243,13 +248,13 @@ public enum Kit {
             lore.add("books to help you out.");
             lore.add("");
             lore.add("This class can use Enchanting Tables");
-            
+
             spawnItems.add(new ItemStack(Material.WOOD_SWORD));
             spawnItems.add(new ItemStack(Material.EXP_BOTTLE, 5));
             spawnItems.add(new ItemStack(Material.BOOK, 8));
             spawnItems.add(new ItemStack(Material.BOOK_AND_QUILL, 1));
             spawnItems.add(new ItemStack(Material.MELON, 10));
-            
+
             armor = new ItemStack[]{
                     new ItemStack(Material.AIR),
                     new ItemStack(Material.AIR),
@@ -258,28 +263,48 @@ public enum Kit {
             };
         }
     },
+	MAN_IN_BLACK(Material.COAL, 5000){
+    	{
+    		
+    	}
+    },
+	/* NOTE: Hahaha change name later */
+	SPARKY(Material.FIRE, 5000){
+    	{
+    		lore.add("You are the spark.");
+    		lore.add("");
+    		lore.add("Flames and sparks follow your path,");
+    		lore.add("as long as you aren't on anything");
+    		lore.add("flammible. You also have a small knife,");
+    		lore.add("but you're not the strongest person");
+    	}
+    },
 	NONE(Material.BEDROCK, 0){
 		{
 		}
 	};
-	
+
+	/**
+	 * Initializes each of the classes.
+	 */
 	static{
 		for(Kit k : values()){
 			k.init();
 		}
 	}
-	
+
 	Race race;
 	ItemStack icon;
 	List<String> lore = new ArrayList<String>();
 	List<ItemStack> spawnItems = new ArrayList<ItemStack>();
 	ItemStack[] armor;
 	int cost;
-	
+
 	/**
-	 * 
-	 * @param r
-	 * @param m
+	 * New instance of Kit
+	 *
+	 * @param m The material to show on the kit selector
+	 * @param cost The cost, in ShotbowXP, of this kit
 	 */
 	Kit(Material m, int cost){
 		icon = new ItemStack(m);
@@ -289,21 +314,26 @@ public enum Kit {
 		icon.setItemMeta(meta);
 		this.cost = cost;
 	}
-	
+
+	/**
+	 * Initialize the race. Called statically on line #268.
+	 */
 	private void init(){
 		for(int i = 0; i < lore.size(); i++){
 			String s = lore.get(i);
 			s = ChatColor.AQUA + s;
 			lore.set(i, s);
 		}
-		
+
 		ItemMeta meta = icon.getItemMeta();
 		meta.setLore(lore);
 		icon.setItemMeta(meta);
 	}
+
 	/**
-	 * 
-	 * @param p
+	 * Give a player a kit's contents and effects.
+	 *
+	 * @param p The player to give the kit to.
 	 */
 	public void giveKitToPlayer(Player p){
 		PlayerInventory inv = p.getInventory();
@@ -312,30 +342,36 @@ public enum Kit {
 		for(PotionEffect effect : p.getActivePotionEffects()){
 			p.removePotionEffect(effect.getType());
 		}
-		
+
 		for(ItemStack item : spawnItems){
 			ItemStack i = item.clone();
 			SoulboundListener.soulbind(i);
 			inv.addItem(i);
 		}
-		
+
 		for(ItemStack item : this.armor){
 			ItemStack i = item.clone();
 			SoulboundListener.soulbind(i);
 		}
-		
+
 		inv.setArmorContents(this.armor);
-		
+
 		addEffects(p);
 	}
-	
+
+	/**
+	 * Return the cost of this kit.
+	 *
+	 * @return
+	 */
 	public int getCost(){
 	    return cost;
 	}
-	
+
 	/**
-	 * 
-	 * @param p
+	 * Add effects that belong to the kit, to the player.
+   *
+	 * @param p The player to put effects on.
 	 */
 	private void addEffects(Player p){
 		if(this == Kit.CIVILIAN || this == Kit.FARMER){
@@ -352,54 +388,60 @@ public enum Kit {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, true), true);
 		}
 	}
-	
+
 	/**
-	 * 
-	 * @return
+	 * Get the name of the kit where the first letter is upercase and the rest are
+	 * lowercase. Use Kit.name for storing information in permissions or database
+	 * however, to ensure reliability.
+	 *
+	 * @return The name of the kit, where the first letter is capitalized.
 	 */
 	public String getName(){
 		return name().substring(0, 1) + name().substring(1).toLowerCase();
 	}
-	
+
 	/**
-	 * 
-	 * @param p
-	 * @return
+	 * Check whether or not a player owns a class.
+	 *
+	 * @param p The player to check if they own this class.
+	 * @return True if player owns class, otherwise false.
 	 */
 	public boolean doesPlayerOwnClass(Player p){
 		return p.isOp() || p.hasPermission("fantasy.kit." + getName().toLowerCase()) || this == Kit.CIVILIAN || this == Kit.MINER || this == Kit.ARCHER;
 	}
-	
+
 	/**
-	 * 
-	 * @param p
-	 * @param r
+	 * Show the class selector to a player, but only include the classes that are
+	 * included with Race $r.
+	 *
+	 * @param p The Player to show the class selector to.
+	 * @param r The Race that owns these kits (archer views archer kits, etc.)
 	 */
 	public static void showKitSelector(Player p, Race r){
 		Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Select Your Class");
-		
+
 		for(Kit k : r.getKits()){
 			if(k.icon.getType() == Material.BEDROCK){
 				continue;
 			}
-			
+
 			ItemStack item = k.icon.clone();
 			ItemMeta meta = item.getItemMeta();
 			List<String> lore = meta.getLore();
-			
+
 			lore.add(ChatColor.AQUA + "----------");
-			
+
 			if(k.doesPlayerOwnClass(p)){
 				lore.add(ChatColor.GREEN + "Unlocked");
 			}else{
 				lore.add(ChatColor.RED + "Locked. Use /buy to purchase");
 			}
-			
+
 			meta.setLore(lore);
 			item.setItemMeta(meta);
 			inv.addItem(item);
 		}
-		
+
 		p.openInventory(inv);
 	}
 }

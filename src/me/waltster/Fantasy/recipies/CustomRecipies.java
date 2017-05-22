@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016-2017 Walter Pach, all rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package me.waltster.Fantasy.recipies;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -25,8 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
-import net.md_5.bungee.api.ChatColor;
-
+@SuppressWarnings("deprecation")
 public class CustomRecipies {
 	private static ArrayList<ShapedRecipe> recipies;
 	
@@ -59,9 +59,11 @@ public class CustomRecipies {
 		meta = current.getItemMeta();
 		meta.setDisplayName(ChatColor.GOLD + "Antibiotics");
 		current.setItemMeta(meta);
+		
 		ShapedRecipe antibioticsRecipe = new ShapedRecipe(current);
 		antibioticsRecipe.shape("", " x ", " o ");
 		antibioticsRecipe.setIngredient('x', Material.MILK_BUCKET);
+		
 		Potion healingPotion = new Potion(PotionType.REGEN);
 		antibioticsRecipe.setIngredient('o', healingPotion.toItemStack(1).getType());
 		recipies.add(antibioticsRecipe);

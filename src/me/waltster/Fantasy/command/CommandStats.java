@@ -77,7 +77,6 @@ public class CommandStats implements CommandExecutor {
 
     private void listStats(Player player, StatType[] stats) {
         String GRAY = ChatColor.GRAY.toString();
-        String DARK_AQUA = ChatColor.DARK_AQUA.toString();
         String AQUA = ChatColor.AQUA.toString();
 
         player.sendMessage(GRAY + "=========[ " + ChatColor.GOLD.toString() + "Stats" + GRAY

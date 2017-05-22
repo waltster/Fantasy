@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016-2017 Walter Pach, all rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,6 +78,23 @@ public enum Race {
 			
 			kits.add(Kit.ARCHER);
 			kits.add(Kit.ENCHANTER);
+		}
+	},
+	GHOST(Material.QUARTZ, 7500){
+		{
+			lore.add("You are ghostly.");
+			lore.add("");
+			lore.add("You are rumored to haunt the forest");
+			lore.add("and plauge allyways, but no one is");
+			lore.add("quite sure. You don't have a home");
+			lore.add("city, but its rumored that many");
+			lore.add("ghosts live amid the ancient ruins.");
+			lore.add("");
+			lore.add("You cannot use weapons, but you have");
+			lore.add("special abilities unique to your race.");
+			
+			kits.add(Kit.NONE);
+			kits.add(Kit.NONE);
 		}
 	},
 	NONE(Material.BEDROCK, 0){

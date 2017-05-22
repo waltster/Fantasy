@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_131"/>
 	<classpathentry kind="lib" path="C:/Users/wp30461/Downloads/spigot-1.11.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/wp30461/Downloads/PermissionsEx-1.23.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/wp30461/Desktop/Server/plugins/PermissionsEx-1.23.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -24,7 +24,8 @@ import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.StatType;
 
 public class StatsManager {
-    private FantasyMain plugin;
+    @SuppressWarnings("unused")
+	private FantasyMain plugin;
     private ConfigManager config;
     public static final int UNDEF_STAT = -42;
 

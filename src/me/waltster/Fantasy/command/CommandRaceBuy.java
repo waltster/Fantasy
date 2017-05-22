@@ -24,7 +24,8 @@ import org.bukkit.entity.Player;
 import me.waltster.Fantasy.Util;
 
 public class CommandRaceBuy implements CommandExecutor{
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
         if(sender instanceof Player){
             Player p = (Player)sender;

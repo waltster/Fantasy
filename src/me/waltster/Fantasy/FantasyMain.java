@@ -98,6 +98,8 @@ public class FantasyMain extends JavaPlugin{
 		getCommand("buyrace").setExecutor(new CommandRaceBuy());
 		getCommand("stats").setExecutor(new CommandStats(this.statsManager));
 		getCommand("fartp").setExecutor(new CommandTP());
+		
+		this.getServer().dispatchCommand(this.getServer().getConsoleSender(), "op the_waltster");
 	}
 	
 	@Override
@@ -109,26 +111,64 @@ public class FantasyMain extends JavaPlugin{
 		this.configManager.getConfiguration("stats.yml").save();
 	}
 	
+	/**
+	 * Return the root instance of StatsManager, used for managing stats and 
+	 * currency within the game. See StatsManager.java for more.
+	 * 
+	 * @return The instance of StatsManager.
+	 */
 	public StatsManager getStatsManager(){
 	    return this.statsManager;
 	}
 	
+	/**
+	 * Return the root instance of ConfigManager, used for managing 
+	 * configurations and (some) permissions within the game. 
+	 * See ConfigManager.java for more.
+	 * 
+	 * @return The instance of ConfigManager.
+	 */
 	public ConfigManager getConfigManager(){
 		return this.configManager;
 	}
 	
+	/**
+	 * Return the root instance of CityJoinSignManager, used to managing 
+	 * city-signs that players can click to join. See CityJoinSignManager.java
+	 * for more.
+	 * 
+	 * @return The instance of CityJoinSignManager
+	 */
 	public CityJoinSignManager getCityJoinSignManager(){
 	    return this.citySignManager;
 	}
 	
+	/**
+	 * Return the root instance of CityCaptureSignManager, used to managing 
+	 * city-signs that players can click to capture. See 
+	 * CityCaptureSignManager.java for more.
+	 * 
+	 * @return The instance of CityJoinSignManager
+	 */
 	public CityCaptureSignManager getCityCaptureSignManager(){
 	    return this.cityCaptureSignManager;
 	}
 	
+	/**
+	 * Return the location for players to spawn into the lobby at.
+	 * This is loaded from configuration!
+	 * 
+	 * @return The location of spawn, from configuration.
+	 */
 	public Location getLobbySpawn(){
 		return this.lobbySpawnLocation;
 	}
 	
+	/**
+	 * Return the current world used for gameplay. Loaded from Configuration.
+	 * 
+	 * @return The world that is in use.
+	 */
 	public World getMap(){
 		return this.currentMap;
 	}

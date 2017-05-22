@@ -30,11 +30,18 @@ import me.waltster.Fantasy.Util;
 public class CommandDie implements CommandExecutor{
 	private FantasyMain main;
 	
+	/**
+	 * Create a new instance of CommandDie. Only one needed per plugin.
+	 * @param main An instance of the game.
+	 */
 	public CommandDie(FantasyMain main){
 		this.main = main;
 	}
 	
 	@Override
+	/**
+	 * Handle when a player types "/die".
+	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(sender instanceof Player){
 			Player p = (Player)sender;

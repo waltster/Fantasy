@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016-2017 Walter Pach, all rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
+/**
+ * Provides many static utilities that come into play at different parts of
+ * the gamemode.
+ * 
+ * @author Walt Pach (walt@waltster.me)
+ */
 public class Util {
+	/**
+	 * Parse a location from a string.
+	 * <p>This can include a world name, but must be in the following format:</p>
+	 * <code>"WORLD,X,Y,Z"</code> or just the coordinates.
+	 * 
+	 * @param s The string to parse
+	 * @return A location object or null.
+	 */
 	public static Location parseLocation(String s){
 		String[] split = s.split(",");
 		World w;
@@ -59,6 +73,11 @@ public class Util {
 		return new Location(w, x, y, z);
 	}
 	
+	/**
+	 * Get the color of each race.
+	 * @param r The race
+	 * @return The color for that race, by default {@link}ChatColor.WHITE
+	 */
 	public static ChatColor getChatColor(Race r){
 		switch(r){
 			case HUMAN:
@@ -73,10 +92,16 @@ public class Util {
 	}
 	
 	/**
-	 * 
-	 * @param p
-	 * @param lobbyLocation
+	 * Send a player to the lobby from the game.
+	 * <p>
+	 *   This resets the player's inventory effects, and gives them a
+	 *   class/race selector. It also updates player meta to "alive" = false,
+	 *   and sets their class/race to NONE.
+	 * </p>
+	 * @param p The player to send to the lobby
+	 * @param lobbyLocation The location of the lobby "spawn".
 	 */
+	@SuppressWarnings("deprecation")
 	public static void sendPlayerToLobby(Player p, Location lobbyLocation){
 		// Clear out the player's armor and inventory
 		p.getInventory().setBoots(new ItemStack(Material.AIR));
@@ -121,9 +146,10 @@ public class Util {
 	}
 	
 	/**
-	 * 
-	 * @param p
-	 * @param location
+	 * Send the player to the game, from the lobby.
+	 * <p>Also updates their PlayerMeta and gives them their kit.</p>
+	 * @param p The player to send
+	 * @param location The location to send them to
 	 */
 	public static void sendPlayerToGame(Player p, Location location){
 		PlayerMeta meta = PlayerMeta.getPlayerMeta(p);
@@ -136,16 +162,20 @@ public class Util {
 		p.teleport(location);
 	}
 	
+	/**
+	 * Clear the chat area for a player.
+	 * @param p The player to clear their chat.
+	 */
 	public static void clearChat(Player p){
-		for(int i = 0; i < 30; i++){
+		for(int i = 0; i < 25; i++){
 			p.sendMessage("                         ");
 		}
 	}
 	
 	/**
-     * 
-     * @param p
-     * @param r
+     * Show the player the buy selector. Not operational.
+     * @deprecated Doesn't work.
+     * @param p The player to show the selector to.
      */
     public static void showBuySelector(Player p){
         Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Purchase Stuff");
@@ -173,6 +203,11 @@ public class Util {
         p.openInventory(inv);
     }
     
+    /**
+     * Show the class purchaser to a player.
+     * @deprecated Not sure if Shotbow will use this, deprecated for now in case we need to remove it.
+     * @param p The player to show the selector to.
+     */
     public static void showClassBuySelector(Player p){
         Inventory inv = Bukkit.createInventory(p, ((Kit.values().length + 8) / 9) * 9, "Buy a Class");
         
@@ -203,6 +238,11 @@ public class Util {
         p.openInventory(inv);
     }
     
+    /**
+     * Show the race purchaser to a player.
+     * @deprecated Not sure if Shotbow will use this, deprecated for now in case we need to remove it.
+     * @param p The player to show the selector to.
+     */
     public static void showRaceBuySelector(Player p){
         Inventory inv = Bukkit.createInventory(p, ((Race.values().length + 8) / 9) * 9, "Buy a Race");
         
@@ -232,7 +272,11 @@ public class Util {
         p.openInventory(inv);
     }
     
-    public static void updatePlayerSkin(Player p, Race r){
-        
-    }
+    /**
+     * Update a player's skin to match their race.
+     * @deprecated
+     * @param p The player to update their skin.
+     * @param r The race the player is.
+     */
+    public static void updatePlayerSkin(Player p, Race r){}
 }

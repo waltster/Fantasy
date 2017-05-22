@@ -16,9 +16,11 @@
 package me.waltster.Fantasy.listener;
 
 import java.util.Collection;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -55,7 +57,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  */
 public class PlayerListener implements Listener{
 	private FantasyMain main;
-
+	private Random rand = new Random();
+	
 	/**
 	 * Create a new instance of PlayerListener. Only one is needed per plugin though.
 	 * @param main The instance of this plugin.
@@ -169,6 +172,7 @@ public class PlayerListener implements Listener{
 		// Setup a new task for 30s from now to either remove the player (if they weren't revived,
 		// or continue gameplay (if they were).
 		main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run(){
 				// If the player was revived exit early
@@ -205,6 +209,10 @@ public class PlayerListener implements Listener{
 		if(event.getFrom().getBlock().getLocation() != p.getLocation().getBlock().getLocation() && PlayerMeta.getPlayerMeta(p).needsRevived()){
 			event.setCancelled(true);
 			p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cant_move_while_dead"));
+		}else if(PlayerMeta.getPlayerMeta(p).getRace() == Race.GHOST && PlayerMeta.getPlayerMeta(p).abilityEnabled()){
+			if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.MAN_IN_BLACK){
+				p.getWorld().spigot().playEffect(p.getLocation(), Effect.LARGE_SMOKE, 4, 0, 1.25321F * rand.nextInt(4), 2.0F, 1.25321F * rand.nextInt(4), 0.0F, 350, 7);
+			}
 		}
 	}
 
@@ -212,6 +220,7 @@ public class PlayerListener implements Listener{
 	 *
 	 * @param event
 	 */
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerSelectRaceOrKit(InventoryClickEvent event){
 		Player p = (Player)event.getWhoClicked();
@@ -372,7 +381,10 @@ public class PlayerListener implements Listener{
 					}
 				}
 			}
-
+			else if(event.getItem().getType() == Material.APPLE){
+				event.setCancelled(true);
+				PlayerMeta.getPlayerMeta(p).setAbilityEnabled(!PlayerMeta.getPlayerMeta(p).abilityEnabled());
+			}
 			// TODO: See if this needs removed
 			return;
 		}
@@ -406,8 +418,7 @@ public class PlayerListener implements Listener{
 				    }else if(sign.getLine(3).contains("Capture")){
 				        event.setCancelled(true);
                         String cityName = ChatColor.stripColor(sign.getLine(1)).toLowerCase();
-                        YamlConfiguration config = main.getConfigManager().getConfiguration("maps.yml").getConfig();
-
+                      
                         if(Race.valueOf(ChatColor.stripColor(sign.getLine(2)).toUpperCase()) == PlayerMeta.getPlayerMeta(event.getPlayer()).getRace()){
                             event.getPlayer().sendMessage(ChatColor.RED + "City already captured by your race!");
                         }else{

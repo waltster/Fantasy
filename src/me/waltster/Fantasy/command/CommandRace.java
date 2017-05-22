@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016-2017 Walter Pach, all rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.waltster.Fantasy.Kit;
 import me.waltster.Fantasy.PlayerMeta;
 import me.waltster.Fantasy.Race;
 import net.md_5.bungee.api.ChatColor;

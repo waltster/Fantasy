@@ -1,4 +1,4 @@
-/*
+/** 
  * Copyright 2016-2017 Walter Pach, all rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,6 @@ import me.waltster.Fantasy.Race;
 import net.md_5.bungee.api.ChatColor;
 
 public class CommandClass implements CommandExecutor{
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(sender instanceof Player){

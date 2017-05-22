@@ -27,10 +27,13 @@ import org.bukkit.entity.Player;
 
 public class CommandTP implements CommandExecutor{
     @Override
+    /**
+     * This is just a simple utility I created to teleport a player to another world so I could test and build at the same time ;)
+     */
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
         if(sender.hasPermission("fantasy.command.fartp") || sender.isOp()){
             if(args.length < 5|| args.length != 5){
-                sender.sendMessage(ChatColor.RED + "/tp <player> <world> <x> <y> <z>");
+                sender.sendMessage(ChatColor.RED + "/fartp <player> <world> <x> <y> <z>");
             }else if(args.length == 5){
                 Player p = Bukkit.getPlayer(args[0]);
                 World w = Bukkit.createWorld(new WorldCreator(args[1]));
