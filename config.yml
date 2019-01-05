@@ -1,0 +1,11 @@
+# Each value here is the time it takes for a resource to re-spawn (in seconds)
+map: world
+
+resource_respawn_timers:
+  logs: 10
+  coal: 15
+  iron: 25
+  gold: 35
+  diamond: 60
+  lapis: 90
+  emerald: 120

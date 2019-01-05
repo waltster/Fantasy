@@ -1,0 +1,29 @@
+# This is the configuration for the lobby. Make sure its set or the
+# game will not load.
+lobby:
+  # Spawn format: "WORLD_NAME,X,Y,Z"
+  spawn: "world,0,128,0"
+
+# These are the different cities in the world.
+# If you don't add a city here it won't be listed
+cities:
+  # Any active city must be listed here if you want any
+  # of its signs or teleports to work. Make sure you add it as
+  # a string and in all lowercase
+  activeCities:
+    - "example1"
+
+  # Here is an example city. It's only indented two spaces from the
+  # "cities" node
+  example1:
+    # Add the location of any "click to join" signs here. Make sure
+    # there is actually a sign at that location though. Each string
+    # is the same "WORLD_NAME,X,Y,Z" format.
+    signs:
+      - ""
+
+    # The city spawn point
+    spawn: "0, 110, 5"
+    # The race that owns the city. Only one is allowed
+    race: "elf"
+
