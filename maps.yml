@@ -26,4 +26,6 @@ cities:
     spawn: "0, 110, 5"
     # The race that owns the city. Only one is allowed
     race: "elf"
-
+    
+enderFurnaces:
+  - "world,x,y,z"

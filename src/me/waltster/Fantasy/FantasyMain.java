@@ -18,6 +18,8 @@ package me.waltster.Fantasy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,6 +33,7 @@ import me.waltster.Fantasy.command.CommandStats;
 import me.waltster.Fantasy.command.CommandTP;
 import me.waltster.Fantasy.listener.ChatListener;
 import me.waltster.Fantasy.listener.ClassAbilityListener;
+import me.waltster.Fantasy.listener.EnderFurnaceListener;
 import me.waltster.Fantasy.listener.PlayerListener;
 import me.waltster.Fantasy.listener.ResourceListener;
 import me.waltster.Fantasy.listener.SoulboundListener;
@@ -38,7 +41,9 @@ import me.waltster.Fantasy.listener.WorldListener;
 import me.waltster.Fantasy.manager.CityCaptureSignManager;
 import me.waltster.Fantasy.manager.CityJoinSignManager;
 import me.waltster.Fantasy.manager.ConfigManager;
+import me.waltster.Fantasy.manager.EnderFurnaceManager;
 import me.waltster.Fantasy.manager.StatsManager;
+import net.minecraft.server.v1_12_R1.BossBattle.BarStyle;
 
 public class FantasyMain extends JavaPlugin{
 	public static FantasyMain instance;
@@ -46,14 +51,16 @@ public class FantasyMain extends JavaPlugin{
 	private Location lobbySpawnLocation;
 	private ConfigManager configManager;
 	private PluginManager pluginManager;
-	private CityJoinSignManager citySignManager;
+	private CityJoinSignManager cityJoinSignManager;
 	private CityCaptureSignManager cityCaptureSignManager;
+	private EnderFurnaceManager enderFurnaceManager;
 	private ChatListener chatListener;
 	private ClassAbilityListener classAbilityListener;
 	private PlayerListener playerListener;
 	private SoulboundListener soulboundListener;
 	private WorldListener worldListener;
 	private ResourceListener resourceListener;
+	private EnderFurnaceListener enderFurnaceListener;
 	private World currentMap;
 	private StatsManager statsManager;
 	
@@ -62,13 +69,14 @@ public class FantasyMain extends JavaPlugin{
 		instance = this;
 		
 		this.getLogger().info("Fantasy version 0.5 by the_waltster enabled");
-		this.getLogger().info("(C) Walter Pach 2016-2017, all rights reserved");
+		this.getLogger().info("(C) Walter Pach 2016-2018, all rights reserved");
 		
 		this.pluginManager = this.getServer().getPluginManager();
 		this.configManager = new ConfigManager(this);
-		this.citySignManager = new CityJoinSignManager(this);
+		this.cityJoinSignManager = new CityJoinSignManager(this);
 		this.cityCaptureSignManager = new CityCaptureSignManager(this);
 		this.statsManager = new StatsManager(this, this.configManager);
+		this.enderFurnaceManager = new EnderFurnaceManager(this);
 		
 		this.chatListener = new ChatListener();
 		this.classAbilityListener = new ClassAbilityListener(this);
@@ -76,6 +84,7 @@ public class FantasyMain extends JavaPlugin{
 		this.soulboundListener = new SoulboundListener();
 		this.worldListener = new WorldListener(this);
 		this.resourceListener = new ResourceListener(this);
+		this.enderFurnaceListener = new EnderFurnaceListener(this);
 		
 		this.configManager.loadConfigurations("config.yml", "maps.yml", "messages.yml");
 		this.pluginManager.registerEvents(chatListener, this);
@@ -84,6 +93,7 @@ public class FantasyMain extends JavaPlugin{
 		this.pluginManager.registerEvents(soulboundListener, this);
 		this.pluginManager.registerEvents(worldListener, this);
 		this.pluginManager.registerEvents(resourceListener, this);
+		this.pluginManager.registerEvents(enderFurnaceListener, this);
 		
 		this.getLogger().info("Event listeners registered");
 		
@@ -93,7 +103,9 @@ public class FantasyMain extends JavaPlugin{
 		if(lobbySpawnLocation == null) throw new IllegalStateException("Null result when reading lobby spawn from maps.yml");
 		if(currentMap == null) throw new IllegalStateException("Null result when reading map name from config.yml");
 
-		this.citySignManager.loadCitySigns();
+		this.cityJoinSignManager.loadCitySigns();
+		this.enderFurnaceManager.loadEnderFurnaces();
+		
 		getCommand("help").setExecutor(new CommandHelp());
 		getCommand("die").setExecutor(new CommandDie(this));
 		getCommand("race").setExecutor(new CommandRace());
@@ -144,7 +156,7 @@ public class FantasyMain extends JavaPlugin{
 	 * @return The instance of CityJoinSignManager
 	 */
 	public CityJoinSignManager getCityJoinSignManager(){
-	    return this.citySignManager;
+	    return this.cityJoinSignManager;
 	}
 	
 	/**
@@ -158,6 +170,10 @@ public class FantasyMain extends JavaPlugin{
 	    return this.cityCaptureSignManager;
 	}
 	
+	public EnderFurnaceManager getEnderFurnaceManager() {
+		return this.enderFurnaceManager;
+	}
+
 	/**
 	 * Return the location for players to spawn into the lobby at.
 	 * This is loaded from configuration!

@@ -16,6 +16,7 @@
 package me.waltster.Fantasy.listener;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +26,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.PlayerMeta;
 import me.waltster.Fantasy.Race;
+import me.waltster.Fantasy.Util;
 import me.waltster.Fantasy.api.CityCaptureEvent;
 import net.md_5.bungee.api.ChatColor;
 
@@ -44,6 +46,12 @@ public class WorldListener implements Listener{
 		if(event.getBlock().getLocation().getWorld().getName().toLowerCase() == main.getLobbySpawn().getWorld().getName().toLowerCase() && !breakAllowed){
 			breaker.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cant_build_area"));
 			event.setCancelled(true);
+			return;
+		}
+		
+		if(this.tooCloseToBuild(event.getBlock().getLocation()) && !event.getPlayer().hasPermission("fantasy.buildOverride")) {
+			event.getPlayer().sendMessage(ChatColor.RED + "You cannot build this close to the city spawn.");
+			event.setCancelled(true);
 		}
 	}
 	
@@ -55,6 +63,12 @@ public class WorldListener implements Listener{
 		
 		if(event.getBlock().getLocation().getWorld().getName().toLowerCase() == main.getLobbySpawn().getWorld().getName().toLowerCase() && !placeAllowed){
 			placer.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cant_build_area"));
+			event.setCancelled(true);
+			return;
+		}
+		
+		if(this.tooCloseToBuild(event.getBlock().getLocation()) && !event.getPlayer().hasPermission("fantasy.buildOverride")) {
+			event.getPlayer().sendMessage(ChatColor.RED + "You cannot build this close to the city spawn.");
 			event.setCancelled(true);
 		}
 	}
@@ -70,5 +84,21 @@ public class WorldListener implements Listener{
 	            p.sendMessage(ChatColor.WHITE + event.getCityName() + ChatColor.GREEN + " has been taken");
 	        }
 	    }
+	}
+	
+	private boolean tooCloseToBuild(Location loc) {
+		for(String location : main.getCityJoinSignManager().getCitySpawnLocations().values()) {
+			Location l = Util.parseLocation(location);
+			
+			if(l == null) {
+				continue;
+			}
+			
+			if(Math.abs(l.getX() - loc.getX()) < 13 && Math.abs(l.getY() - loc.getY()) < 13 && Math.abs(l.getZ() - loc.getZ()) < 13) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

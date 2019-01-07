@@ -36,6 +36,7 @@ public class CityJoinSignManager {
 	 * Value: Arraylist of locations for join signs. One city can have multiple signs.
 	 */
 	private HashMap<String, ArrayList<Location>> signs;
+	private HashMap<String, String> citySpawnLocations;
 	
 	/**
 	 * 
@@ -44,6 +45,25 @@ public class CityJoinSignManager {
 	public CityJoinSignManager(FantasyMain main){
 		this.main = main;
 		this.signs = new HashMap<String, ArrayList<Location>>();
+		this.citySpawnLocations = new HashMap<String, String>();
+		
+		List<String> activeCities = main.getConfigManager().getConfiguration("maps.yml").getConfig().getStringList("cities.activeCities");
+		
+		if(activeCities == null){
+			throw new IllegalStateException("Cannot load cities list");
+		}
+		
+		for(String city : activeCities){
+			ConfigurationSection section = main.getConfigManager().getConfiguration("maps.yml").getConfig().getConfigurationSection("cities." + city);
+			
+			Location spawn = Util.parseLocation(section.getString("spawn"));
+			
+			if(spawn == null) {
+				throw new IllegalStateException("Missing spawn for city: " + city);
+			}
+			
+			citySpawnLocations.put(city, section.getString("spawn"));
+		}
 	}
 	
 	/**
@@ -124,5 +144,9 @@ public class CityJoinSignManager {
 		for(String s : signs.keySet()){
 			updateSigns(s);
 		}
+	}
+	
+	public HashMap<String, String> getCitySpawnLocations(){
+		return this.citySpawnLocations;
 	}
 }

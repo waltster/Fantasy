@@ -15,13 +15,13 @@
  */
 package me.waltster.Fantasy.listener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -32,14 +32,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import me.waltster.Fantasy.FantasyMain;
 import me.waltster.Fantasy.Kit;
@@ -48,8 +51,6 @@ import me.waltster.Fantasy.Race;
 import me.waltster.Fantasy.StatType;
 import me.waltster.Fantasy.Util;
 import me.waltster.Fantasy.api.CityCaptureEvent;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
  * The Listener for all Player events (excluding class/race specific ones).
@@ -82,7 +83,6 @@ public class PlayerListener implements Listener{
 
 		event.setJoinMessage("");
 
-		// Change this to whatever you want. Right now it just loads the configurable message from 'messages.yml'.
 		p.sendMessage(ChatColor.GOLD + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.player_join"));
 
 
@@ -90,8 +90,6 @@ public class PlayerListener implements Listener{
 			p.sendMessage(ChatColor.GOLD + "Sending you to your previous position. Type /die to restart from the beginning");
 			return;
 		}else{
-			// I wrote a method in the utilities class to clean up this area. We have to pass the
-			// location because there's no static instance of FantasyMain to use with Util.
 			Util.sendPlayerToLobby(p, main.getLobbySpawn());
 		}
 	}
@@ -106,26 +104,30 @@ public class PlayerListener implements Listener{
 	 */
 	@EventHandler
 	public void onPlayerHurt(EntityDamageByEntityEvent event){
-		// If a player was hurt we need to check if it was in the lobby
 		if(event.getEntity() instanceof Player){
 			Player p = (Player)event.getEntity();
 
-			// If the player's location is in the same world as the lobby cancel the action.
 			if(p.getLocation().getWorld().getName() == main.getLobbySpawn().getWorld().getName()){
+				if(event.getCause() == DamageCause.VOID) {
+					event.setCancelled(true);
+					Util.sendPlayerToLobby(p, main.getLobbySpawn());
+				}
+				
 				event.setCancelled(true);
 			}
+			
 
-			// If the entity who damaged the player was a player as well then handle inter-racial conflict
 			if(event.getDamager() instanceof Player){
 				Player p1 = (Player)event.getDamager();
 
-				// If the two players are the same Race then cancel the damage and send a message to the damager.
 				if(PlayerMeta.getPlayerMeta(p).getRace() == PlayerMeta.getPlayerMeta(p1).getRace()){
 					event.setCancelled(true);
 					// Set this to whatever you want. Right now it just uses a pre-configured message from 'messages.yml'
 					p1.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.cannot_harm_race"));
 				}else if(PlayerMeta.getPlayerMeta(p1).getKit() == Kit.WARRIOR){
 				    event.setDamage(event.getDamage() + 1);
+				}else if(PlayerMeta.getPlayerMeta(p1).getKit() == Kit.ARCHER && event.getDamager().getType() == EntityType.ARROW) {
+					event.setDamage(event.getDamage() * 2);
 				}
 			}
 		}
@@ -141,49 +143,37 @@ public class PlayerListener implements Listener{
 	 */
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
-		// This needs to be final so that we can use it in the BukkitRunnable
 		final Player p = event.getEntity();
 
-		// If the player died but isn't in the game just send them back to the lobby spawn.
-		// An example of this happening would be if someone fell off the edge of the lobby world.
 		if(!PlayerMeta.getPlayerMeta(p).isAlive()){
 			p.teleport(main.getLobbySpawn());
 		}
 
-		// If the player was killed by a player and it wasn't himself then lets broadcast a message to everyone
 		if(p.getKiller() != null && !p.getKiller().equals(p)){
-			// Format the killed and killer player's name with their race and name
 			String deadName = ChatColor.GOLD + "[" + Util.getChatColor(PlayerMeta.getPlayerMeta(p).getRace()) + PlayerMeta.getPlayerMeta(p).getRace() + ChatColor.GOLD + "] " + p.getName();
 			String killerName = ChatColor.GOLD + "[" + Util.getChatColor(PlayerMeta.getPlayerMeta(p.getKiller()).getRace()) + PlayerMeta.getPlayerMeta(p.getKiller()).getRace() + ChatColor.GOLD + "] " + p.getKiller().getName();
 
-			// Send the death message to everyone.
 			event.setDeathMessage(deadName + ChatColor.RED + " was killed by " + killerName);
 			main.getStatsManager().incrementStat(StatType.KILLS, p.getKiller());
 
-			p.getKiller().sendMessage(ChatColor.GREEN + "+3 ShotbowXP");
+			p.getKiller().sendMessage(ChatColor.GREEN + "+3 Shotbow XP");
 			main.getStatsManager().incrementStat(StatType.SHOTBOW_XP, p.getKiller(), 3);
 		}
 
-		// Store that the player needs revived before he can move again.
 		PlayerMeta.getPlayerMeta(p).setNeedsRevived(true);
 
-		// Tell the player they've got 30s to be revived.
 		p.sendMessage(ChatColor.RED + main.getConfigManager().getConfiguration("messages.yml").getConfig().getString("messages.revive_timer_started"));
 
-		// Setup a new task for 30s from now to either remove the player (if they weren't revived,
-		// or continue gameplay (if they were).
 		main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run(){
-				// If the player was revived exit early
 				if(PlayerMeta.getPlayerMeta(p).needsRevived() == false){
 					return;
 				}
 
 				PlayerMeta.getPlayerMeta(p).setAlive(false);
 
-				// Drop half the player's XP on the ground
 				for(int i = 0; i < p.getExp() / 2; i++){
 					main.getMap().spawnEntity(p.getLocation(), EntityType.EXPERIENCE_ORB);
 				}
@@ -212,12 +202,12 @@ public class PlayerListener implements Listener{
 				p.damage(4);
 			}
 			
-			if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.MAN_IN_BLACK){
+			if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.SHADE){
 				p.getWorld().playEffect(p.getLocation(), Effect.SMOKE, 0);
 			}else if(PlayerMeta.getPlayerMeta(p).getKit() == Kit.SPARKY){
 				p.getWorld().playEffect(p.getLocation(), Effect.LAVA_POP, 0);
 				
-				if(rand.nextInt(40) < 5){
+				if(rand.nextInt(10) < 8){
 					p.getLocation().add(0, 1, 0).getBlock().setType(Material.FIRE);
 					//p.getWorld().playEffect(p.getLocation(), Effect.FLAME, 0);
 				}
@@ -300,11 +290,11 @@ public class PlayerListener implements Listener{
                 int amount = main.getStatsManager().getStat(StatType.SHOTBOW_XP, p);
 
                 if(amount >= Race.valueOf(name).getCost()){
-                    PermissionUser user = PermissionsEx.getUser(p);
+                  //  PermissionUser user = PermissionsEx.getUser(p);
 
                     main.getStatsManager().setValue(StatType.SHOTBOW_XP, p, amount - Race.valueOf(name).getCost());
-                    user.addPermission("fantasy.race." + name.toLowerCase());
-                    user.save();
+                   // user.addPermission("fantasy.race." + name.toLowerCase());
+                   // user.save();
                     p.sendMessage(ChatColor.GREEN + "Purchased race " + ChatColor.WHITE + Race.valueOf(name).getName());
                 }else{
                     p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " Royals");
@@ -324,11 +314,11 @@ public class PlayerListener implements Listener{
                 int amount = main.getStatsManager().getStat(StatType.SHOTBOW_XP, p);
 
                 if(amount >= Kit.valueOf(name).getCost()){
-                    PermissionUser user = PermissionsEx.getUser(p);
+                  //  PermissionUser user = PermissionsEx.getUser(p);
 
                     main.getStatsManager().setValue(StatType.SHOTBOW_XP, p, amount - Race.valueOf(name).getCost());
-                    user.addPermission("fantasy.kit." + name.toLowerCase());
-                    user.save();
+                   // user.addPermission("fantasy.kit." + name.toLowerCase());
+                    //user.save();
                     p.sendMessage(ChatColor.GREEN + "Purchased class " + ChatColor.WHITE + Race.valueOf(name).getName());
                 }else{
                     p.sendMessage(ChatColor.RED + "You only have " + ChatColor.WHITE + amount + ChatColor.RED + " ShotbowXP");
@@ -339,13 +329,12 @@ public class PlayerListener implements Listener{
 
 	@EventHandler
 	public void onSoulboundInteract(InventoryClickEvent event){
-	    if(event.getInventory().getType() == InventoryType.CHEST || event.getInventory().getType() == InventoryType.DISPENSER || event.getInventory().getType() == InventoryType.DROPPER){
-	        if(event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta()){
-    	        if(event.getCurrentItem().getItemMeta().getDisplayName().contains(ChatColor.GOLD + "Soulbound")){
-    	            event.setCancelled(true);
-    	        }
-	        }
-	    }
+		if(event.getCurrentItem().hasItemMeta()) {
+			if(event.getCurrentItem().getItemMeta().getLore().contains(ChatColor.GOLD + "Soulbound")) {
+				event.setCancelled(true);
+			}
+		}
+	    
 	}
 
 	/**
@@ -393,6 +382,33 @@ public class PlayerListener implements Listener{
 			else if(event.getItem().getType() == Material.APPLE){
 				event.setCancelled(true);
 				PlayerMeta.getPlayerMeta(p).setAbilityEnabled(!PlayerMeta.getPlayerMeta(p).abilityEnabled());
+				
+				if(!PlayerMeta.getPlayerMeta(p).abilityEnabled() && PlayerMeta.getPlayerMeta(p).getRace() == Race.GHOST) {
+					main.getLogger().info("Trigger!");
+					p.removePotionEffect(PotionEffectType.INVISIBILITY);
+				}else if(PlayerMeta.getPlayerMeta(p).abilityEnabled() && PlayerMeta.getPlayerMeta(p).getRace() == Race.GHOST) {
+					p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true), true);
+				}
+			}else if (event.getItem().getType() == Material.COMPASS) {
+				boolean setToNextCity = false;
+				boolean compassSet = false;
+				
+				while(!compassSet) {
+					for(String cityName : main.getCityJoinSignManager().getCitySpawnLocations().keySet()) {
+						if(setToNextCity) {
+							ItemMeta meta = event.getItem().getItemMeta();
+							meta.setDisplayName(ChatColor.RED + "Pointing to " + ChatColor.AQUA + cityName);
+							event.getItem().setItemMeta(meta);
+							p.setCompassTarget(Util.parseLocation(main.getCityJoinSignManager().getCitySpawnLocations().get(cityName)));
+							compassSet = true;
+							break;
+						}
+						
+						if(event.getItem().getItemMeta().getDisplayName().contains(cityName) || event.getItem().getItemMeta().getDisplayName().contains("Click to point")) {
+							setToNextCity = true;
+						}
+					}
+				}
 			}
 			// TODO: See if this needs removed
 			return;
@@ -476,9 +492,14 @@ public class PlayerListener implements Listener{
 	    		return;
 	    	}else{
 	    		event.getEntity().getKiller().sendMessage(ChatColor.GREEN + "+1 Shotbow XP");
+	    		main.getStatsManager().incrementStat(StatType.SHOTBOW_XP, event.getEntity().getKiller());
 	    	}
 
 	        // TODO: +1 Shotbow XP
 	    }
 	}
+	
+
+	
+
 }

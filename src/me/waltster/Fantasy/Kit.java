@@ -225,7 +225,8 @@ public enum Kit {
 			lore.add("With your light equipment, you");
 			lore.add("are given a speed boost while");
 			lore.add("wearing light armor.");
-
+			lore.add("You bow does 2x damage.");
+			
 			spawnItems.add(new ItemStack(Material.BOW));
 			spawnItems.add(new ItemStack(Material.ARROW, 16));
 			spawnItems.add(new ItemStack(Material.MELON, 15));
@@ -266,7 +267,7 @@ public enum Kit {
             };
         }
     },
-	MAN_IN_BLACK(Material.COAL, 5000){
+	SHADE(Material.COAL, 5000){
     	{
     		lore.add("You are the spark.");
     		lore.add("");
@@ -427,6 +428,14 @@ public enum Kit {
 
 		inv.setArmorContents(this.armor);
 
+		ItemStack compass = new ItemStack(Material.COMPASS);
+		ItemMeta meta = compass.getItemMeta();
+		
+		meta.setDisplayName(ChatColor.DARK_RED + "Click to point to city");
+		compass.setItemMeta(meta);
+		SoulboundListener.soulbind(compass);
+		inv.addItem(compass);
+		
 		addEffects(p);
 	}
 
@@ -457,7 +466,7 @@ public enum Kit {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true), true);
 		}else if(this == Kit.ARCHER){
 			p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, true), true);
-		}else if(this == Kit.MAN_IN_BLACK || this == Kit.SPARKY){
+		}else if(this == Kit.SHADE || this == Kit.SPARKY){
 			p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true), true);
 			p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 1, true), true);
 			

@@ -85,7 +85,7 @@ public enum Race {
 			lore.add("You are ghostly.");
 			lore.add("");
 			lore.add("You are rumored to haunt the forest");
-			lore.add("and plauge allyways, but no one is");
+			lore.add("and plauge alleyways, but no one is");
 			lore.add("quite sure. You don't have a home");
 			lore.add("city, but its rumored that many");
 			lore.add("ghosts live amid the ancient ruins.");
@@ -93,7 +93,7 @@ public enum Race {
 			lore.add("You cannot use weapons, but you have");
 			lore.add("special abilities unique to your race.");
 			
-			kits.add(Kit.MAN_IN_BLACK);
+			kits.add(Kit.SHADE);
 			kits.add(Kit.SPARKY);
 		}
 	},
